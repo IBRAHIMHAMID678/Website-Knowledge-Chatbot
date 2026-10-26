@@ -7,7 +7,7 @@
 
 **Bot Response:**
 
-Based on verified PlacidWay package details for Immunity Therapy Center (ITC) in Tijuana, Mexico, the Alternative Adenocarcinoma Cancer Treatment package is offered in two tiers:
+Based on verified PlacidWay package details for **Alternative Adenocarcinoma Cancer Treatment in Tijuana** at Immunity Therapy Center (ITC) in Tijuana, Mexico, the treatment package is offered in two tiers:
 
 - **Out-Patient Program (3 Weeks):** **$18,995 USD**
 - **In-Patient Program (3 Weeks):** **$30,000 USD**
@@ -34,6 +34,7 @@ Based on verified PlacidWay pricing data, alternative medicine is generally chea
 Across alternative medicine providers abroad, initial consultations range from $50 to $250 USD, acupuncture ranges from $200 to $800 USD, and holistic packages average approximately $15,032 USD.
 
 **Citations:**
+- [ITC Immunity Therapy Center - Cancer Treatment in Tijuana Mexico](https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 - [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
 
 ---
@@ -61,6 +62,8 @@ Based on verified PlacidWay package details, the alternative cancer treatment pr
 
 **Citations:**
 - [Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
+- [Alternative Adrenal Cancer Treatment in Tijuana](https://www.placidway.com/package/7902/Alternative-Adrenal-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
+- [Alternative Anal Cancer Treatment in Tijuana](https://www.placidway.com/package/7901/Alternative-Anal-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
 
 ---
 
@@ -71,7 +74,7 @@ Based on verified PlacidWay package details, the alternative cancer treatment pr
 
 **Bot Response:**
 
-At Immunity Therapy Center in Tijuana, Mexico, treatment programs typically require a **minimum stay of 3 weeks**.
+At Immunity Therapy Center (ITC) in Tijuana, Mexico, treatment programs typically require a **minimum stay of 3 weeks**.
 
 This 3-week period allows the medical team to evaluate your initial response, stimulate the immune system, and clear toxins. Following the in-clinic phase, doctors design a personalized home-care kit, and an official follow-up consultation is scheduled 3 months after discharge.
 
@@ -113,15 +116,15 @@ I am specialized in PlacidWay medical tourism, treatments, clinics, and pricing 
 
 **Bot Response:**
 
-I cannot provide a personal medical diagnosis or medical clearance for your condition. Whether alternative treatment is clinically safe and suitable depends on a comprehensive individual case review.
+I cannot provide a personal medical diagnosis or medical clearance for your specific condition. Whether alternative treatment is clinically safe and suitable depends on a comprehensive physician review of your medical records and pathology.
 
 We strongly advise consulting your oncologist or primary physician. PlacidWay can also arrange an official clinical case evaluation with specialists at Immunity Therapy Center (ITC) in Tijuana, Mexico.
 
 *Medical Disclaimer: I provide information from PlacidWay pages for educational purposes only. I cannot provide medical advice, diagnosis, or clearance. Always consult a qualified physician or oncologist.*
 
 **Citations:**
-- [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
 - [ITC Tijuana Videos | Alternative Cancer Treatment](https://www.placidway.com/profile-videos/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
+- [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
 
 ---
 

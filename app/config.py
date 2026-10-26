@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -54,9 +54,10 @@ class Settings(BaseSettings):
         "Please request a free quote or contact PlacidWay directly, and our medical coordinators will gladly assist you."
     )
 
-    class Config:
-        env_file = str(BASE_DIR / ".env")
-        extra = "allow"
+    model_config = SettingsConfigDict(
+        env_file=str(BASE_DIR / ".env"),
+        extra="allow"
+    )
 
 settings = Settings()
 
