@@ -144,13 +144,26 @@ class HybridVectorStore:
                 has_corpus_match = False
 
         # Price / Cost Intent Booster
-        # If user asks how much something costs and the query is in-domain, prioritize chunks with actual prices
         is_cost_query = bool(re.search(r"\b(cost|costs|price|prices|how much|usd|\$|pricing|expensive|cheaper|quote)\b", query, re.I))
         if is_cost_query and has_corpus_match:
             for idx, chunk in enumerate(self.chunks):
                 chunk_text = chunk["text"]
                 if re.search(r"(\$\d[\d,]+|\bUSD\b|### Cost|### Package Price|Total Cost)", chunk_text):
                     composite_scores[idx] += 0.15
+
+        # Inclusions Intent Booster
+        is_inclusion_query = bool(re.search(r"\b(include|included|inclusions?|what is included|package details)\b", query, re.I))
+        if is_inclusion_query and has_corpus_match:
+            for idx, chunk in enumerate(self.chunks):
+                chunk_text = chunk["text"]
+                if "Included in the Out-Patient Program" in chunk_text or "Included in the In-Patient Program" in chunk_text or "Standard Inclusions" in chunk_text:
+                    if len(chunk_text) > 180:
+                        composite_scores[idx] += 0.22
+
+        # Penalize tiny orphan fragment chunks (< 90 chars) so complete lists always rank higher
+        for idx, chunk in enumerate(self.chunks):
+            if len(chunk["clean_content"].strip()) < 90:
+                composite_scores[idx] *= 0.3
 
         # If distinctive terms had zero matches in the entire corpus, penalize top scores to ensure honest fallback
         if not has_corpus_match:
