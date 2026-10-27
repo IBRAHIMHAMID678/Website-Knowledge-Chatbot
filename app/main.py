@@ -1,7 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
@@ -57,6 +57,38 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Vercel Serverless Path Normalization Middleware
+@app.middleware("http")
+async def normalize_vercel_paths(request: Request, call_next):
+    # In Vercel serverless environment, rewrites to /api/index.py set 'x-matched-path'
+    matched_path = request.headers.get("x-matched-path") or request.headers.get("x-forwarded-uri")
+    if matched_path:
+        clean_path = matched_path.split("?")[0]
+        request.scope["path"] = clean_path
+        if "raw_path" in request.scope:
+            request.scope["raw_path"] = clean_path.encode("latin-1")
+    elif request.scope.get("path") == "/api/index.py":
+        request.scope["path"] = "/"
+    return await call_next(request)
+
+@app.get("/api", tags=["Monitoring"])
+async def api_root():
+    return {
+        "status": "online",
+        "service": settings.PROJECT_NAME,
+        "version": settings.VERSION,
+        "chunks_indexed": len(vector_store.chunks)
+    }
+
+@app.get("/api/debug", tags=["Monitoring"])
+async def api_debug(request: Request):
+    return {
+        "url_path": request.url.path,
+        "scope_path": request.scope.get("path"),
+        "matched_path_header": request.headers.get("x-matched-path"),
+        "headers": dict(request.headers)
+    }
 
 # Include API routes (both /api/endpoint and /endpoint for serverless proxy resilience)
 app.include_router(router, prefix="/api")
