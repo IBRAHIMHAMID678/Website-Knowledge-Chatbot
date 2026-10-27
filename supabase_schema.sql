@@ -42,10 +42,17 @@ CREATE INDEX IF NOT EXISTS idx_leads_created_at ON public.leads (created_at DESC
 CREATE INDEX IF NOT EXISTS idx_content_gaps_created_at ON public.content_gaps (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_chat_messages_session ON public.chat_messages (session_id, id DESC);
 
--- Enable Row Level Security (RLS)
+-- Enable Row Level Security (RLS) on all exposed tables
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.content_gaps ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
+
+-- Explicit PostgREST Data API & Role Grants
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON TABLE public.leads TO anon, authenticated, service_role;
+GRANT ALL ON TABLE public.content_gaps TO anon, authenticated, service_role;
+GRANT ALL ON TABLE public.chat_messages TO anon, authenticated, service_role;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
 
 -- Drop existing policies if re-running script to avoid conflicts
 DROP POLICY IF EXISTS "Allow anon and service role insert leads" ON public.leads;
