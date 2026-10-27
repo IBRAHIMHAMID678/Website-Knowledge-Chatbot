@@ -94,8 +94,8 @@ def parse_placidway_html(html_content: str, url: str) -> Dict[str, Any]:
     ]):
         tag.decompose()
         
-    # Remove cookie consent banners and known widgets
-    for junk in soup.find_all(class_=re.compile(r"(cookie|consent|cky-|hotjar|user-menu|breadcrumb|modal|social-share|share-bar)", re.I)):
+    # Remove cookie consent banners, reviews, testimonials, and known widgets
+    for junk in soup.find_all(class_=re.compile(r"(cookie|consent|cky-|hotjar|user-menu|breadcrumb|modal|social-share|share-bar|reviews?|testimonial|patient-feedback|comment)", re.I)):
         junk.decompose()
 
     # 3. Replace HTML tables with Markdown representations wrapped in <p> tags
@@ -108,9 +108,15 @@ def parse_placidway_html(html_content: str, url: str) -> Dict[str, Any]:
         else:
             table.decompose()
 
-    # 4. Extract structured sections, filtering cross-promotional boilerplate
+    # 4. Extract structured sections, filtering cross-promotional boilerplate & uncurated reviews
     BOILERPLATE_HEADINGS = [
         "related experiences",
+        "recent reviews",
+        "patient reviews",
+        "medical center reviews",
+        "reviews",
+        "testimonials",
+        "stories, testimonials, and procedures",
         "cancer treatment solutions near you",
         "unlock the best cancer treatment packages",
         "transformative cancer treatment experiences",
@@ -132,7 +138,11 @@ def parse_placidway_html(html_content: str, url: str) -> Dict[str, Any]:
 
         lower_txt = txt.lower()
 
-        # Check if this heading starts a cross-promotional boilerplate section
+        # Filter out libelous or uncurated user review snippets
+        if "beware, the doctors lie" in lower_txt or "recent reviews" in lower_txt:
+            continue
+
+        # Check if this heading starts a cross-promotional boilerplate or review section
         if elem.name.startswith("h"):
             if any(b in lower_txt for b in BOILERPLATE_HEADINGS):
                 skip_section = True

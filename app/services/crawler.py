@@ -3,6 +3,7 @@ import time
 import json
 import logging
 from typing import List, Dict, Any, Tuple
+import urllib.robotparser
 import httpx
 from app.config import settings
 from app.services.parser import parse_placidway_html, chunk_document
@@ -20,7 +21,8 @@ async def fetch_url(client: httpx.AsyncClient, url: str) -> Tuple[str, str, int]
 
 async def crawl_all_target_urls() -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[str]]:
     """
-    Crawls strictly the 7 target PlacidWay URLs at ~1 req/sec with polite User-Agent.
+    Crawls strictly the 7 target PlacidWay URLs at ~1 req/sec with polite User-Agent,
+    respecting robots.txt rules.
     Returns:
         parsed_pages: List of cleaned page documents
         all_chunks: List of chunk dictionaries
@@ -37,7 +39,24 @@ async def crawl_all_target_urls() -> Tuple[List[Dict[str, Any]], List[Dict[str, 
     errors = []
     
     async with httpx.AsyncClient(headers=headers, follow_redirects=True) as client:
+        # Check and parse robots.txt for compliance
+        rp = urllib.robotparser.RobotFileParser()
+        try:
+            _, robots_txt, r_status = await fetch_url(client, "https://www.placidway.com/robots.txt")
+            if r_status == 200 and robots_txt:
+                rp.parse(robots_txt.splitlines())
+                logger.info("Successfully loaded and parsed PlacidWay robots.txt rules.")
+            else:
+                rp.allow_all = True
+        except Exception as e:
+            logger.warning(f"Could not load robots.txt, defaulting to polite crawl: {e}")
+            rp.allow_all = True
+
         for idx, url in enumerate(settings.TARGET_URLS, 1):
+            if not rp.can_fetch(settings.CRAWLER_USER_AGENT, url):
+                logger.warning(f"Skipping {url} as disallowed by robots.txt")
+                continue
+
             logger.info(f"Crawling [{idx}/{len(settings.TARGET_URLS)}]: {url}")
             url, html, status = await fetch_url(client, url)
             

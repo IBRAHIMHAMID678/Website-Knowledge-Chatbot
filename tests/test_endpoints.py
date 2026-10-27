@@ -41,9 +41,15 @@ def test_lead_capture_endpoint():
     assert data["lead_id"] > 0
 
 def test_admin_gaps_endpoint():
-    response = client.get("/api/admin/gaps")
-    assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    from app.config import settings
+    # 1. Unauthenticated request should be rejected with 401
+    unauth_resp = client.get("/api/admin/gaps")
+    assert unauth_resp.status_code == 401
+
+    # 2. Authenticated request with admin key should succeed with 200
+    auth_resp = client.get("/api/admin/gaps", headers={"X-Admin-Key": settings.ADMIN_API_KEY})
+    assert auth_resp.status_code == 200
+    assert isinstance(auth_resp.json(), list)
 
 def test_out_of_scope_guardrail():
     response = client.post("/api/chat", json={

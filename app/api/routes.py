@@ -1,9 +1,11 @@
+import asyncio
 import time
 import logging
-from typing import List, Dict, Any
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from typing import List, Dict, Any, Optional
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Header, Query, Depends
 from fastapi.responses import StreamingResponse
 
+from app.config import settings
 from app.models.schemas import (
     ChatRequest, 
     ChatResponse, 
@@ -21,6 +23,19 @@ from app.db.database import get_content_gaps, get_leads
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api")
+refresh_lock = asyncio.Lock()
+
+async def verify_admin_access(
+    x_admin_key: Optional[str] = Header(None, alias="X-Admin-Key"),
+    admin_key: Optional[str] = Query(None, alias="api_key")
+):
+    """Protects sensitive patient lead data and content gaps from unauthorized public exposure."""
+    provided_key = x_admin_key or admin_key
+    if not provided_key or provided_key != settings.ADMIN_API_KEY:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized: Admin access required. Provide 'X-Admin-Key' header or '?api_key=...' query parameter."
+        )
 
 @router.post("/chat", response_model=ChatResponse, summary="Submit a question to the grounded bot")
 async def chat_endpoint(request: ChatRequest):
@@ -48,7 +63,7 @@ async def create_lead(lead: LeadCreate):
     """Captures interested patient details and assigns them to the session."""
     return process_new_lead(lead)
 
-@router.get("/leads", summary="List captured leads (Internal/Admin)")
+@router.get("/leads", summary="List captured leads (Internal/Admin)", dependencies=[Depends(verify_admin_access)])
 async def list_leads(limit: int = 50):
     return get_leads(limit)
 
@@ -56,26 +71,33 @@ async def list_leads(limit: int = 50):
 async def refresh_knowledge_base():
     """
     Crawls the 7 PlacidWay URLs respecting robots.txt and 1 req/sec,
-    re-indexes semantic vectors, and saves fresh cache.
+    re-indexes semantic vectors, and saves fresh cache. Guarded against concurrent runs.
     """
-    start_time = time.time()
-    parsed_pages, all_chunks, errors = await crawl_all_target_urls()
-    
-    if all_chunks:
-        vector_store.build_index(all_chunks)
+    if refresh_lock.locked():
+        raise HTTPException(
+            status_code=409,
+            detail="Ingestion refresh is already in progress. Please wait for current crawl to complete."
+        )
         
-    elapsed = round(time.time() - start_time, 2)
-    
-    return IngestStatus(
-        success=len(all_chunks) > 0,
-        total_pages_crawled=len(parsed_pages),
-        total_chunks_indexed=len(all_chunks),
-        elapsed_seconds=elapsed,
-        pages=[{"title": p["title"], "url": p["url"], "type": p["page_type"]} for p in parsed_pages],
-        errors=errors
-    )
+    async with refresh_lock:
+        start_time = time.time()
+        parsed_pages, all_chunks, errors = await crawl_all_target_urls()
+        
+        if all_chunks:
+            vector_store.build_index(all_chunks)
+            
+        elapsed = round(time.time() - start_time, 2)
+        
+        return IngestStatus(
+            success=len(all_chunks) > 0,
+            total_pages_crawled=len(parsed_pages),
+            total_chunks_indexed=len(all_chunks),
+            elapsed_seconds=elapsed,
+            pages=[{"title": p["title"], "url": p["url"], "type": p["page_type"]} for p in parsed_pages],
+            errors=errors
+        )
 
-@router.get("/admin/gaps", summary="List logged content gaps / unanswered questions")
+@router.get("/admin/gaps", summary="List logged content gaps / unanswered questions", dependencies=[Depends(verify_admin_access)])
 async def list_content_gaps(limit: int = 50):
     """Exposes questions the bot could not answer from current content for editorial review."""
     return get_content_gaps(limit)

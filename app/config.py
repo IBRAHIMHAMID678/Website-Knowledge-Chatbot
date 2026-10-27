@@ -18,6 +18,9 @@ class Settings(BaseSettings):
         "nvidia/nemotron-3.5-lightning:free"
     ]
     
+    # Security Configuration
+    ADMIN_API_KEY: str = os.getenv("ADMIN_API_KEY", "placidway_admin_key_2026")
+    
     # Data Storage Paths
     DATA_DIR: Path = BASE_DIR / "data"
     SCRAPED_PAGES_DIR: Path = DATA_DIR / "scraped_pages"

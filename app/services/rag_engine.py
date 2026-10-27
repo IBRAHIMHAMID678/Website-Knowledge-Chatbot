@@ -100,12 +100,19 @@ def translate_query_for_search(query: str, lang: str) -> str:
     return q
 
 # Multilingual Guardrail Pattern Matchers
+RE_GREETING = re.compile(
+    r"^(hi|hello|hey|good\s+(?:morning|afternoon|evening)|greetings|hola|buenos\s+d[ií]as|buenas\s+tardes|marhaba|مرحبا|أهلا|السلام\s+عليكم)[\s.!?,]*$",
+    re.IGNORECASE
+)
+
 RE_MEDICAL_ADVICE = re.compile(
     r"(safe\s+(?:for|with|if|to)|can\s+i\s+(?:take|undergo|receive|do)|will\s+it\s+cure|should\s+i|prescribe|diagnos|"
-    r"(?:my|have|with|for)\s+(?:diabetes|allergy|cancer|condition|disease|heart|blood\s+pressure|hypertension|asthma|pacemaker|kidney|liver|pregnancy)|"
-    r"medical\s+clearance|cure\s+my|guarantee\s+a\s+cure|side\s+effect|adverse\s+reaction|"
-    r"seguro\s+(?:para|si|con)|puedo\s+tomar|curar|recetar|diagnost|mi\s+(?:diabetes|alergia|c[aá]ncer|condici[oó]n|enfermedad|hipertensi[oó]n|presi[oó]n|asma|coraz[oó]n)|"
-    r"آمن\s+(?:ل|مع|في)|هل\s+يعالج|هل\s+يضمن|هل\s+العلاج\s+آمن|وصفة|تشخيص|السكري|حساسية|ضغط\s+الدم)",
+    r"\brisks?\b|\bcomplications?\b|\bcontraindications?\b|\bsurger(y|ies)\b|"
+    r"(?:my|have|with|for)\s+(?:diabetes|allergy|cancer|condition|disease|heart|blood\s+pressure|hypertension|asthma|pacemaker|kidney|liver|pregnancy|gastric\s+sleeve)|"
+    r"medical\s+clearance|cure\s+my|guarantee\s+a\s+cure|side\s+effects?|adverse\s+reactions?|"
+    r"seguro\s+(?:para|si|con)|puedo\s+tomar|curar|recetar|diagnost|\briesgos?\b|\bcomplicaci[oó]n(?:es)?\b|\bcirug[ií]a(?:s)?\b|"
+    r"mi\s+(?:diabetes|alergia|c[aá]ncer|condici[oó]n|enfermedad|hipertensi[oó]n|presi[oó]n|asma|coraz[oó]n|manga\s+g[aá]strica)|"
+    r"آمن\s+(?:ل|مع|في)|هل\s+يعالج|هل\s+يضمن|هل\s+العلاج\s+آمن|وصفة|تشخيص|السكري|حساسية|ضغط\s+الدم|\bمخاطر\b|\bمضاعفات\b|\bجراحة\b)",
     re.IGNORECASE
 )
 RE_BOOKING_DIRECT = re.compile(
@@ -176,9 +183,40 @@ GROUNDING & BEHAVIOR PROTOCOLS:
 """
 
 def detect_fast_guardrails(query: str, lang: str = "en") -> Optional[Dict[str, Any]]:
-    """Quick filter for pure off-topic or direct tomorrow-booking requests."""
+    """Quick filter for pure off-topic, direct greetings, or direct tomorrow-booking requests."""
     q = query.strip()
     
+    # 1. Warm Conversational Greeting Handler
+    if RE_GREETING.match(q):
+        if lang == "es":
+            ans = (
+                "¡Hola! Soy el Asistente Virtual Oficial de PlacidWay Medical Tourism. "
+                "Puedo ayudarle con información sobre tratamientos alternativos contra el cáncer, paquetes médicos, "
+                "opciones de estancia y precios verificados en Immunity Therapy Center (ITC) en Tijuana, México, así como opciones de bienestar en el extranjero.\n\n"
+                "¿En qué puedo orientarle hoy?"
+            )
+        elif lang == "ar":
+            ans = (
+                "مرحباً بك! أنا المساعد الذكي الرسمي لبلاسيدواي (PlacidWay) للسياحة العلاجية. "
+                "يمكنني مساعدتك بمعلومات معتمدة حول باقات علاج السرطان بالطب البديل، تفاصيل العيادات والأسعار في مركز Immunity Therapy Center في تيخوانا، المكسيك، وخيارات الصحة العامة.\n\n"
+                "كيف يمكنني مساعدتك اليوم؟"
+            )
+        else:
+            ans = (
+                "Hello! I am the official AI Assistant for PlacidWay Medical Tourism. "
+                "I can help you with verified information regarding alternative cancer treatment packages, clinic profiles, "
+                "stay details, and pricing at Immunity Therapy Center (ITC) in Tijuana, Mexico, as well as wellness options abroad.\n\n"
+                "How can I assist you today?"
+            )
+        return {
+            "answer": ans,
+            "citations": [],
+            "is_fallback": False,
+            "disclaimer_included": False,
+            "lead_prompt_recommended": False
+        }
+
+    # 2. Out of Scope Filter
     if RE_OUT_OF_SCOPE.search(q):
         if lang == "es":
             ans = (
@@ -206,6 +244,7 @@ def detect_fast_guardrails(query: str, lang: str = "en") -> Optional[Dict[str, A
             "lead_prompt_recommended": False
         }
         
+    # 3. Direct Booking Limitation
     if RE_BOOKING_DIRECT.search(q):
         if lang == "es":
             ans = (
@@ -244,6 +283,24 @@ def detect_fast_guardrails(query: str, lang: str = "en") -> Optional[Dict[str, A
 def check_out_of_corpus_destination(query: str, lang: str = "en") -> Optional[Dict[str, Any]]:
     """Detects inquiries regarding destinations outside the 7 verified URLs (e.g. Turkey, Colombia, India)."""
     q_lower = query.lower()
+    
+    LOCALIZED_NAMES = {
+        "Turkey": {"en": "Turkey", "es": "Turquía", "ar": "تركيا"},
+        "Germany": {"en": "Germany", "es": "Alemania", "ar": "ألمانيا"},
+        "Colombia": {"en": "Colombia", "es": "Colombia", "ar": "كولومبيا"},
+        "India": {"en": "India", "es": "India", "ar": "الهند"},
+        "Spain": {"en": "Spain", "es": "España", "ar": "إسبانيا"},
+        "Costa Rica": {"en": "Costa Rica", "es": "Costa Rica", "ar": "كوستاريكا"},
+        "Brazil": {"en": "Brazil", "es": "Brasil", "ar": "البرازيل"},
+        "Japan": {"en": "Japan", "es": "Japón", "ar": "اليابان"},
+        "South Korea": {"en": "South Korea", "es": "Corea del Sur", "ar": "كوريا الجنوبية"},
+        "Canada": {"en": "Canada", "es": "Canadá", "ar": "كندا"},
+        "United Kingdom": {"en": "United Kingdom", "es": "Reino Unido", "ar": "المملكة المتحدة"},
+        "France": {"en": "France", "es": "Francia", "ar": "فرنسا"},
+        "Italy": {"en": "Italy", "es": "Italia", "ar": "إيطاليا"},
+        "Poland": {"en": "Poland", "es": "Polonia", "ar": "بولندا"},
+    }
+
     OUT_OF_CORPUS = [
         ("turkey", "Turkey"), ("turquía", "Turkey"), ("turquia", "Turkey"), ("تركيا", "Turkey"),
         ("germany", "Germany"), ("alemania", "Germany"), ("ألمانيا", "Germany"),
@@ -257,27 +314,29 @@ def check_out_of_corpus_destination(query: str, lang: str = "en") -> Optional[Di
         ("canada", "Canada"), ("canadá", "Canada"), ("كندا", "Canada"),
         ("uk", "United Kingdom"), ("reino unido", "United Kingdom"), ("بريطانيا", "United Kingdom"),
         ("france", "France"), ("francia", "France"), ("فرنسا", "France"),
-        ("italy", "Italy"), ("italia", "Italy"), ("إيطاليا", "Italy")
+        ("italy", "Italy"), ("italia", "Italy"), ("إيطاليا", "Italy"),
+        ("poland", "Poland"), ("polonia", "Poland"), ("بولندا", "Poland")
     ]
     for pattern, name in OUT_OF_CORPUS:
         if pattern in q_lower:
+            loc_name = LOCALIZED_NAMES.get(name, {}).get(lang, name)
             if lang == "es":
                 ans = (
-                    f"No dispongo de registros de precios o clínicas para medicina alternativa en **{name}** dentro de nuestras páginas verificadas actuales. "
+                    f"No dispongo de registros de precios o clínicas para medicina alternativa en **{loc_name}** dentro de nuestras páginas verificadas actuales. "
                     f"Nuestra base de datos actual cubre el Immunity Therapy Center en **Tijuana, México** y opciones de medicina alternativa en **Tailandia**.\n\n"
-                    f"¿Desea solicitar una cotización gratuita para opciones de tratamiento en {name} con un coordinador de pacientes de PlacidWay?"
+                    f"¿Desea solicitar una cotización gratuita para opciones de tratamiento en {loc_name} con un coordinador de pacientes de PlacidWay?"
                 )
             elif lang == "ar":
                 ans = (
-                    f"لا تتوفر لدي معلومات أسعار أو عيادات للطب البديل في **{name}** ضمن صفحاتنا المعتمدة الحالية. "
+                    f"لا تتوفر لدي معلومات أسعار أو عيادات للطب البديل في **{loc_name}** ضمن صفحاتنا المعتمدة الحالية. "
                     f"تغطي سجلاتنا الحالية مركز Immunity Therapy Center في **تيخوانا، المكسيك** وخيارات الطب البديل في **تايلاند**.\n\n"
-                    f"هل ترغب في طلب عرض أسعار مجاني لخيارات العلاج في {name} من منسق المرضى في بلاسيدواي؟"
+                    f"هل ترغب في طلب عرض أسعار مجاني لخيارات العلاج في {loc_name} من منسق المرضى في بلاسيدواي؟"
                 )
             else:
                 ans = (
-                    f"I do not have pricing or clinic records for alternative medicine in **{name}** within our current verified pages. "
+                    f"I do not have pricing or clinic records for alternative medicine in **{loc_name}** within our current verified pages. "
                     f"Our current knowledge base strictly covers Immunity Therapy Center in **Tijuana, Mexico** and alternative wellness options in **Thailand**.\n\n"
-                    f"Would you like to request a free quote for treatment options in {name} from a PlacidWay patient coordinator?"
+                    f"Would you like to request a free quote for treatment options in {loc_name} from a PlacidWay patient coordinator?"
                 )
             return {
                 "answer": ans,
@@ -599,9 +658,10 @@ async def call_openrouter_llm(messages: List[Dict[str, str]]) -> Tuple[Optional[
                 last_status = response.status_code
                 if response.status_code == 200:
                     data = response.json()
-                    content = data["choices"][0]["message"].get("content", "")
-                    if content.strip():
-                        return content, 200
+                    message = data.get("choices", [{}])[0].get("message", {})
+                    content = message.get("content") or ""
+                    if isinstance(content, str) and content.strip():
+                        return content.strip(), 200
                 logger.warning(f"Model {model} returned HTTP {response.status_code}: {response.text[:120]}")
             except Exception as e:
                 logger.error(f"Error calling {model}: {e}")
@@ -812,7 +872,7 @@ Answer the question conversationally, clearly, and completely using ONLY the con
         raw_answer = f"{raw_answer}\n\n{disclaimer_text}"
         disclaimer_attached = True
 
-    # 10. Fallback and lead detection
+    # 10. Fallback and Refusal Detection
     fallback_indicators = [
         "do not have this information", "don't have this information", "not in our current records",
         "no dispongo de esta información", "لا تتوفر لدي هذه المعلومات"
@@ -823,9 +883,24 @@ Answer the question conversationally, clearly, and completely using ONLY the con
         
     lead_rec = is_fallback or bool(RE_QUOTE_INTENT.search(query)) or is_medical_question
 
-    citations_list = list(citations_dict.values())
+    # 11. Refusal & Citation Integrity Gate
+    # Suppress unrelated citations when the answer explicitly states information is missing from records
+    refusal_cues = [
+        "do not have", "don't have", "not listed in", "not covered in",
+        "not in our current records", "not in the current records", "not available in the verified",
+        "can’t provide a price", "cant provide a price", "cannot provide a price",
+        "no dispongo de", "no tengo información", "لا تتوفر لدي", "غير متوفرة في سجلاتنا",
+        "i can't confirm", "i cannot confirm"
+    ]
+    is_refusal = is_fallback or any(phrase in raw_answer.lower() for phrase in refusal_cues)
+    if is_refusal:
+        citations_list = []
+        raw_answer = re.sub(r"\[(?:Alternative\s+)?(?:Adrenal|Anal|Adenocarcinoma|Cancer|ITC).*?\]\(https?://[^\)]+\)", "", raw_answer)
+    else:
+        citations_list = list(citations_dict.values())
+
     save_message(session_id, "user", query)
-    save_message(session_id, "assistant", raw_answer, [c.model_dump() for c in citations_list])
+    save_message(session_id, "assistant", raw_answer, [c.model_dump() if hasattr(c, "model_dump") else c for c in citations_list])
 
     return ChatResponse(
         answer=raw_answer,
@@ -1068,12 +1143,25 @@ Answer conversationally, clearly, and completely using ONLY the context above. C
         yield f"data: {json.dumps({'type': 'token', 'content': disclaimer_block})}\n\n"
         full_answer += disclaimer_block
 
-    citations_list = [c.model_dump() for c in citations_dict.values()]
     is_fallback = "do not have this information" in full_answer.lower() or "no dispongo de esta información" in full_answer.lower() or "لا تتوفر لدي هذه المعلومات" in full_answer.lower()
     if is_fallback:
         log_content_gap(session_id, query, search_query, max_score)
         
     lead_rec = bool(RE_QUOTE_INTENT.search(query)) or is_medical_question or is_fallback
+
+    # Refusal & Citation Integrity Gate for streaming
+    refusal_cues = [
+        "do not have", "don't have", "not listed in", "not covered in",
+        "not in our current records", "not in the current records", "not available in the verified",
+        "can’t provide a price", "cant provide a price", "cannot provide a price",
+        "no dispongo de", "no tengo información", "لا تتوفر لدي", "غير متوفرة في سجلاتنا",
+        "i can't confirm", "i cannot confirm"
+    ]
+    is_refusal = is_fallback or any(phrase in full_answer.lower() for phrase in refusal_cues)
+    if is_refusal:
+        citations_list = []
+    else:
+        citations_list = [c.model_dump() for c in citations_dict.values()]
 
     yield f"data: {json.dumps({'type': 'meta', 'citations': citations_list, 'lead_recommended': lead_rec})}\n\n"
     yield "data: [DONE]\n\n"
