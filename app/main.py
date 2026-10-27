@@ -61,18 +61,19 @@ app.add_middleware(
 # Vercel Serverless Path Normalization Middleware
 @app.middleware("http")
 async def normalize_vercel_paths(request: Request, call_next):
-    # In Vercel serverless environment, rewrites to /api/index.py set 'x-matched-path'
+    # In Vercel serverless environment, rewrites to /api/index set 'x-matched-path'
     matched_path = request.headers.get("x-matched-path") or request.headers.get("x-forwarded-uri")
     if matched_path:
         clean_path = matched_path.split("?")[0]
         request.scope["path"] = clean_path
         if "raw_path" in request.scope:
             request.scope["raw_path"] = clean_path.encode("latin-1")
-    elif request.scope.get("path") == "/api/index.py":
-        request.scope["path"] = "/"
+    elif request.scope.get("path") in ["/api/index", "/api/index.py"]:
+        request.scope["path"] = "/api"
     return await call_next(request)
 
 @app.get("/api", tags=["Monitoring"])
+@app.get("/api/index", tags=["Monitoring"])
 async def api_root():
     return {
         "status": "online",
