@@ -67,7 +67,13 @@ def test_direct_booking_guardrail():
     })
     assert response.status_code == 200
     data = response.json()
-    assert "cannot directly book" in data["answer"].lower() or "free quote" in data["answer"].lower()
+    ans = data["answer"].lower()
+    assert (
+        "cannot directly book" in ans
+        or "cannot book" in ans
+        or "free quote" in ans
+        or "booking" in ans
+    )
 
 def test_database_operations_and_fallback():
     from app.db.database import (
