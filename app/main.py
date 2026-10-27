@@ -88,8 +88,6 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 @app.get("/", include_in_schema=False)
-@app.get("/api", include_in_schema=False)
-@app.get("/api/index.py", include_in_schema=False)
 async def serve_index():
     index_file = static_dir / "index.html"
     if index_file.exists():

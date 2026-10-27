@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlacidWay Medical Tourism — AI Knowledge Chatbot</title>
+  <meta name="description" content="Conversational AI Chatbot strictly grounded in PlacidWay clinic profiles, treatment packages, and pricing." />
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="brand">
+          <div class="brand-logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            </svg>
+          </div>
+          <div class="brand-info">
+            <span class="brand-title">PlacidWay Medical Assistant</span>
+            <span class="brand-subtitle">Grounded in ITC Tijuana & Alternative Care Pages</span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <div class="status-indicator" id="kbStatusBadge" title="Knowledge Base Status">
+            <span class="status-dot"></span>
+            <span class="status-text" id="statusText">7 Pages Grounded</span>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="refreshKbBtn" title="Re-crawl and refresh knowledge base from the 7 URLs">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+            </svg>
+            Refresh KB
+          </button>
+          <button class="btn btn-secondary btn-sm" id="newChatBtn" title="Start a fresh conversation">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v14"/>
+              <path d="M5 12h14"/>
+            </svg>
+            New Chat
+          </button>
+          <button class="btn btn-secondary btn-sm" id="toggleBenchmarkBtn" title="Open Evaluator Benchmark Suite">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 11 3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            Evaluator Mode
+          </button>
+          <button class="btn btn-primary btn-sm" id="openQuoteModalBtn">
+            Request Free Quote
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+      <!-- Full-Width Chat Workspace -->
+      <section class="chat-workspace">
+        <div class="messages-container" id="messagesContainer">
+          <!-- Dynamic messages will be appended here -->
+        </div>
+
+        <!-- Dynamic Contextual Follow-up Suggestions -->
+        <div class="suggestions-bar" id="suggestionsBar">
+          <!-- Dynamically populated chips -->
+        </div>
+
+        <!-- Input Bar Area -->
+        <div class="input-area">
+          <form class="chat-form" id="chatForm">
+            <div class="input-wrapper">
+              <textarea 
+                id="messageInput" 
+                rows="1" 
+                placeholder="Ask any question about cancer packages, inclusions, prices, or doctors at ITC Tijuana..." 
+                required
+              ></textarea>
+              <button type="submit" class="send-btn" id="sendBtn" title="Send message">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m22 2-7 20-4-9-9-4Z"/>
+                  <path d="M22 2 11 13"/>
+                </svg>
+              </button>
+            </div>
+          </form>
+          <div class="input-footnote">
+            All facts verified from PlacidWay medical pages. Always consult a physician for medical advice.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Evaluator Benchmark Drawer (Collapsible Modal/Slide-over) -->
+    <div class="drawer-overlay" id="benchmarkDrawer">
+      <div class="drawer-card">
+        <div class="drawer-header">
+          <div>
+            <h3 class="drawer-title">Assessment Evaluation Suite</h3>
+            <p class="drawer-subtitle">Click any assessment benchmark question to test grounding and guardrails:</p>
+          </div>
+          <button class="drawer-close-btn" id="closeBenchmarkBtn">&times;</button>
+        </div>
+        <div class="drawer-chips-list" id="testChipsContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Lead Capture Modal -->
+    <div class="modal-overlay" id="quoteModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-title">Request a Free Treatment Quote</h3>
+            <p class="modal-subtitle">A PlacidWay patient coordinator will contact you with custom clinic pricing.</p>
+          </div>
+          <button class="modal-close-btn" id="closeQuoteModalBtn" aria-label="Close modal">&times;</button>
+        </div>
+        <form id="leadForm" class="modal-form">
+          <div class="form-group">
+            <label for="leadFullName">Full Name *</label>
+            <input type="text" id="leadFullName" placeholder="e.g. Sarah Jenkins" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="leadEmail">Email Address *</label>
+              <input type="email" id="leadEmail" placeholder="sarah@example.com" required />
+            </div>
+            <div class="form-group">
+              <label for="leadPhone">Phone / WhatsApp</label>
+              <input type="tel" id="leadPhone" placeholder="+1 (555) 019-2834" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="leadTreatment">Treatment of Interest</label>
+            <input type="text" id="leadTreatment" placeholder="e.g. Alternative Cancer Package (ITC Tijuana)" />
+          </div>
+          <div class="form-group">
+            <label for="leadNotes">Specific Questions or Diagnosis Stage</label>
+            <textarea id="leadNotes" rows="2" placeholder="Tell us about dates, diagnosis, or travel plans..."></textarea>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="cancelQuoteBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="submitLeadBtn">Submit Free Quote Request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

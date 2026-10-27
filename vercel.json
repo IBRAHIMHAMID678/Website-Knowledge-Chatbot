@@ -1,13 +1,12 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.py": {
-      "includeFiles": "static/**,data/vector_index.json"
-    }
-  },
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/healthz",
       "destination": "/api/index.py"
     }
   ]
