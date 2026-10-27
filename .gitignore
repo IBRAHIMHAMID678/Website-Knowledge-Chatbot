@@ -2,7 +2,6 @@
 .env
 *.local
 *.secret
-SUBMISSION_NOTES.md
 
 # Python cache & virtual environments
 __pycache__/
