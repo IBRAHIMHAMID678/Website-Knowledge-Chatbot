@@ -2,27 +2,27 @@
 
 ## What I Would Improve With Another Week
 
-1. **Automated Continuous Re-Ingestion with ETag & Conditional Headers:**  
-   Currently, on-demand re-indexing occurs via `/api/ingest/refresh`. With another week, I would deploy an asynchronous worker that polls `ETag` and `Last-Modified` HTTP headers on a scheduled basis, re-crawling and re-embedding only the specific clinic pages that have updated, eliminating site-wide overhead.
+1. **Auto-updating data instead of manual scraping:**  
+   Right now, the bot indexes the pages when triggered. If I had another week, I would build a lightweight background job that checks if PlacidWay pages changed (using `ETag` or `Last-Modified` headers) and automatically re-crawls only the pages that were updated, without re-crawling the entire site.
 
-2. **Two-Stage Retrieval with Cross-Encoder Reranking (Cohere / BGE-Reranker):**  
-   While our hybrid dense + sparse vector search achieves 100% precision for the 7 target URLs, scaling to 10,000+ PlacidWay treatment pages requires a two-stage retrieval pipeline: retrieve the top 30 candidate chunks with vector search, followed by cross-encoder reranking to optimize semantic context relevance before passing to the LLM.
+2. **Reranker for scaling to thousands of pages:**  
+   Our hybrid search (keywords + embeddings) works accurately for the 7 target pages. But if we scale this to thousands of pages across PlacidWay, I would add a reranking step (like Cohere Rerank or BGE). That way, we can pull the top 20–30 relevant chunks and let the reranker pick the best context before passing it to the LLM.
 
-3. **Direct CRM & Lead Workflow Integration:**  
-   Connect the lead capture modal to an external CRM endpoint (e.g., Salesforce, HubSpot, or secure webhook) to automatically route high-intent patient inquiries, preferred contact times, and chat session transcripts directly to PlacidWay clinical coordinators.
+3. **Connecting lead capture directly to CRM or email:**  
+   The bot already collects patient contact info and saves leads to the database. With more time, I would connect this directly to PlacidWay’s CRM (like HubSpot or Salesforce) or trigger a webhook/email alert so patient coordinators receive the lead and chat summary immediately.
 
-4. **Automated Continuous Evaluation Pipeline (RAGAS / TruLens):**  
-   Implement an automated CI/CD evaluation step on code pushes to continuously score **Faithfulness**, **Answer Relevance**, and **Context Recall** against golden evaluation benchmarks.
+4. **Automated accuracy checks in CI/CD:**  
+   I would set up automated testing (using tools like Ragas) in GitHub Actions to score the bot's factual accuracy, grounding, and relevance on every pull request.
 
 ---
 
 ## Known Limitations
 
-1. **Strict 7-URL Content Boundary:**  
-   The bot is deliberately constrained to the 7 verified PlacidWay URLs provided in the assessment. Inquiries regarding destinations, clinics, or procedures outside these verified pages (e.g., cosmetic surgery in Colombia or IVF in Greece) trigger an honest fallback and refer the patient to PlacidWay coordinators.
+1. **Strictly bounded to the 7 provided URLs:**  
+   The bot is deliberately designed not to make things up or pull unverified info from the open web. It only knows what is on the 7 PlacidWay pages provided. If someone asks about procedures or countries outside this data (like dental in Colombia or IVF in Greece), the bot honestly says it does not have that information and directs them to PlacidWay coordinators.
 
-2. **Individualized Clinical & Diagnostic Pricing:**  
-   Published international treatment costs serve as baseline tiers (such as the $18,995 Out-Patient and $30,000 In-Patient cancer programs at ITC Tijuana, $64 in Thailand, and $110 in Turkey). Because oncology regimens frequently require adjustments based on staging, pathology, and diagnostic bloodwork, the bot cannot quote customized clinical pricing without a physician consultation.
+2. **Custom cancer pricing requires doctor review:**  
+   The bot quotes published package prices accurately ($18,995 Out-Patient and $30,000 In-Patient at ITC Tijuana, $64 in Thailand, and $110 in Turkey). However, real cancer treatments vary based on a patient's medical history and staging, so the bot cannot guess custom treatment costs and directs patients to request an official medical evaluation.
 
-3. **External Scheduling Limitations:**  
-   The bot cannot directly reserve or confirm appointment slots in clinic calendars, as it lacks real-time calendar and EHR integration. It directs patients to request a free quote or contact PlacidWay coordinators to initiate the scheduling process.
+3. **No direct calendar booking:**  
+   The bot does not have live access to clinic scheduling systems or doctor calendars, so it cannot book an appointment for tomorrow. Instead, it collects the user's details through the quote form so coordinators can arrange the booking.

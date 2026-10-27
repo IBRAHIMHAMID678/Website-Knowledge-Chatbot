@@ -146,11 +146,11 @@ def translate_query_for_search(query: str, lang: str) -> str:
 # Genuine boundary guardrails intercept only security violations, emergency medical 911,
 # direct credit card capture, and completely non-medical trivia.
 RE_PROMPT_INJECTION = re.compile(
-    r"(?:ignore\s+(?:all\s+)?previous\s+instructions|system\s+prompt|developer\s+rules|hidden\s+context|"
-    r"repeat\s+verbatim|jailbreak|DAN\s+mode|as\s+an\s+unfiltered\s+ai|reveal\s+(?:your\s+)?(?:instructions|prompt|rules)|"
-    r"\{\s*[\"']override[\"']\s*:\s*true|\bcommand\s*:\s*[\"']?list\s+all\b|"
-    r"internal\s+document\s+ids|vector\s+index\s+as\s+a\s+raw|raw\s+text\s+dumps|"
-    r"api[_-]?key|secret[_-]?key|process\.env|base64\s+decode)",
+    r'''(?:ignore\s+(?:all\s+)?previous\s+instructions|system\s+prompt|developer\s+rules|hidden\s+context|'''
+    r'''repeat\s+verbatim|jailbreak|\bDAN\b|DAN\s+mode|unfiltered(?:\s+ai)?|operates\s+outside|reveal\s+(?:your\s+)?(?:instructions|prompt|rules)|'''
+    r'''\{\s*["']override["']\s*:\s*true|\bcommand\s*:\s*["']?list\s+all\b|'''
+    r'''internal\s+document\s+ids|vector\s+index\s+as\s+a\s+raw|raw\s+text\s+dumps|'''
+    r'''api[_-]?key|secret[_-]?key|process\.env|base64\s+decode)''',
     re.IGNORECASE
 )
 
@@ -234,6 +234,26 @@ def evaluate_boundary_guardrails(query: str, lang: str = "en") -> Optional[Dict[
             "ar": "أنا متخصص في السياحة العلاجية والعيادات والأسعار المعتمدة لدى بلاسيدواي. لا يمكنني الإجابة عن مواضيع عامة مثل الطقس أو الرياضة. كيف يمكنني مساعدتك في استفساراتك العلاجية؟"
         }
         return {"answer": responses.get(lang, responses["en"]), "citations": [], "is_fallback": False, "disclaimer_included": False, "lead_prompt_recommended": False}
+
+    # Direct Appointment Booking Limitation Guardrail
+    RE_DIRECT_BOOKING = re.compile(
+        r"(?:can\s+you\s+)?(?:book\s+(?:me\s+)?(?:an\s+)?appointment|book\s+tomorrow|schedule\s+(?:an\s+)?appointment|agendar\s+(?:una\s+)?cita|r[eé]server\s+un\s+rendez-vous|حجز\s+موعد)",
+        re.IGNORECASE
+    )
+    if RE_DIRECT_BOOKING.search(q):
+        responses = {
+            "en": "I cannot directly book appointments into clinic calendars. However, you can request a **Free Quote and Appointment Booking** through PlacidWay! Our dedicated patient coordinators will contact the clinic directly and arrange your travel, doctor consultations, and itinerary.",
+            "es": "No puedo reservar citas directamente en los calendarios de las clínicas. Sin embargo, ¡puede solicitar una **Cotización Gratuita y Reserva de Cita** a través de PlacidWay! Nuestros coordinadores de pacientes se comunicarán directamente con la clínica para gestionar sus consultas médicas, itinerario y viaje.",
+            "fr": "Je ne peux pas réserver directement de créneaux sur les plannings des cliniques. Cependant, vous pouvez effectuer une demande de **Devis Gratuit et Réservation** via PlacidWay ! Nos coordinateurs contacteront directement la clinique pour organiser vos consultations médicales et votre séjour.",
+            "ar": "لا يمكنني حجز المواعيد مباشرة في تقويم العيادات. ومع ذلك، يمكنك طلب **عرض أسعار مجاني وحجز موعد** عبر بلاسيدواي! سيتولى منسقو المرضى لدينا التواصل مع العيادة مباشرة لترتيب استشاراتك الطبية وجدول سفرك."
+        }
+        return {
+            "answer": responses.get(lang, responses["en"]),
+            "citations": [],
+            "is_fallback": False,
+            "disclaimer_included": False,
+            "lead_prompt_recommended": True
+        }
 
     if RE_GREETING.match(q):
         responses = {
@@ -989,35 +1009,97 @@ def synthesize_grounded_answer_from_chunks(
                 "- **Pharmacy Support & Diagnostics:** Protocol-specific medications and imaging managed on-site."
             )
 
-    # 13. General Pricing Inquiries
+    # 13. Pricing Inquiries (Specific Procedures vs General Cost Overviews)
     if any(k in q_lower for k in ["how much", "cost", "price", "pricing", "cuánto cuesta", "precio", "costo", "combien coûte", "prix", "كم تكلفة", "كم سعر"]):
+        is_cancer_specific = any(k in q_lower for k in ["cancer", "cáncer", "cancérologie", "سرطان", "adenocarcinoma", "adrenal", "anal", "tijuana", "itc", "mexico", "méxico", "المكسيك"])
+        
+        # 13a. Specific Cancer / Mexico / ITC Pricing Inquiry
+        if is_cancer_specific:
+            if lang == "es":
+                return (
+                    "Según los registros de precios verificados de PlacidWay para Immunity Therapy Center (ITC) en Tijuana, México, los paquetes de tratamiento alternativo contra el cáncer de 3 semanas se dividen en dos modalidades:\n\n"
+                    "- **Programa Ambulatorio (3 Semanas):** **$18,995 USD**\n"
+                    "- **Programa Hospitalario (3 Semanas):** **$30,000 USD**\n\n"
+                    "El programa ambulatorio es para pacientes que asisten a terapias diarias, mientras que el programa hospitalario incluye supervisión médica las 24 horas y pensión completa."
+                )
+            elif lang == "fr":
+                return (
+                    "Selon les dossiers officiels de PlacidWay pour Immunity Therapy Center (ITC) à Tijuana au Mexique, le forfait de cancérologie de 3 semaines se décline en deux options tarifaires claires :\n\n"
+                    "- **Programme Ambulatoire (3 semaines) :** **18 995 $ USD**\n"
+                    "- **Programme Hospitalier (3 semaines) :** **30 000 $ USD**\n\n"
+                    "La formule ambulatoire convient aux patients logeant à l'extérieur et venant aux soins chaque jour, tandis que l'hospitalisation comprend une surveillance médicale continue 24h/24 et la pension complète."
+                )
+            elif lang == "ar":
+                return (
+                    "بناءً على أسعار بلاسيدواي المعتمدة لمركز Immunity Therapy Center (ITC) في تيخوانا، المكسيك، تُقدم باقات علاج السرطان البديل لمدة 3 أسابيع في فئتين رئيسيتين:\n\n"
+                    "- **برنامج العيادات الخارجية (3 أسابيع):** **18,995 دولار أمريكي**\n"
+                    "- **برنامج الإقامة الداخلية (3 أسابيع):** **30,000 دولار أمريكي**\n\n"
+                    "خيار العيادات الخارجية مخصص للمرضى المقيمين في فنادق مجاورة، بينما يوفر خيار الإقامة الداخلية رعاية طبية مستمرة على مدار الساعة مع الإقامة والوجبات."
+                )
+            else:
+                return (
+                    "Based on verified PlacidWay package details for Immunity Therapy Center (ITC) in Tijuana, Mexico, the alternative cancer treatment packages are offered in two tiers:\n\n"
+                    "- **Out-Patient Program (3 Weeks):** **$18,995 USD**\n"
+                    "- **In-Patient Program (3 Weeks):** **$30,000 USD**\n\n"
+                    "The Out-Patient program is designed for patients visiting daily, while the In-Patient tier provides 24/7 medical supervision and full room and board."
+                )
+
+        # 13b. Unspecified / General Pricing Query (e.g. "what is the cost?")
         if lang == "es":
             return (
-                "Según los registros de precios verificados de PlacidWay para Immunity Therapy Center (ITC) en Tijuana, México, los paquetes de tratamiento alternativo contra el cáncer de 3 semanas se dividen en dos modalidades:\n\n"
-                "- **Programa Ambulatorio (3 Semanas):** **$18,995 USD**\n"
-                "- **Programa Hospitalario (3 Semanas):** **$30,000 USD**\n\n"
-                "El programa ambulatorio es para pacientes que asisten a terapias diarias, mientras que el programa hospitalario incluye supervisión médica las 24 horas y pensión completa."
+                "Los costos verificados en los registros de PlacidWay varían según el tratamiento y el destino médico:\n\n"
+                "- **Tratamiento Alternativo contra el Cáncer (Immunity Therapy Center — Tijuana, México):**\n"
+                "  - **Programa Ambulatorio (3 Semanas):** **$18,995 USD**\n"
+                "  - **Programa Hospitalario (3 Semanas):** **$30,000 USD** (con atención médica 24/7 y pensión completa)\n"
+                "- **Fisioterapia y Bienestar Holístico (Form Recovery & Wellness — Bangkok, Tailandia):**\n"
+                "  - Sesiones ambulatorias a partir de **$64 USD**\n"
+                "- **Ozonoterapia y Medicina Alternativa (Fizikon Medical Center — Konya, Turquía):**\n"
+                "  - A partir de **$110 USD**\n"
+                "- **Consultas Iniciales en el Extranjero:**\n"
+                "  - Generalmente oscilan entre **$50 y $250 USD**\n\n"
+                "¿Sobre qué procedimiento, clínica o destino específico le gustaría recibir información detallada? También puede solicitar una Cotización Gratuita."
             )
         elif lang == "fr":
             return (
-                "Selon les dossiers officiels de PlacidWay pour Immunity Therapy Center (ITC) à Tijuana au Mexique, le forfait de cancérologie de 3 semaines se décline en deux options tarifaires claires :\n\n"
-                "- **Programme Ambulatoire (3 semaines) :** **18 995 $ USD**\n"
-                "- **Programme Hospitalier (3 semaines) :** **30 000 $ USD**\n\n"
-                "La formule ambulatoire convient aux patients logeant à l'extérieur et venant aux soins chaque jour, tandis que l'hospitalisation comprend une surveillance médicale continue 24h/24 et la pension complète."
+                "Les tarifs vérifiés dans les dossiers PlacidWay varient selon l'intervention et la destination médicale :\n\n"
+                "- **Cancérologie Intégrative (Immunity Therapy Center — Tijuana, Mexique) :**\n"
+                "  - **Formule Ambulatoire (3 semaines) :** **18 995 $ USD**\n"
+                "  - **Hospitalisation Complète (3 semaines) :** **30 000 $ USD** (surveillance 24h/24 et pension complète)\n"
+                "- **Bien-être et Physiothérapie (Form Recovery & Wellness — Bangkok, Thaïlande) :**\n"
+                "  - Séances ambulatoires à partir de **64 $ USD**\n"
+                "- **Ozonothérapie (Fizikon Medical Center — Konya, Turquie) :**\n"
+                "  - À partir de **110 $ USD**\n"
+                "- **Consultations Initiales à l'Étranger :**\n"
+                "  - Se situent généralement entre **50 et 250 $ USD**\n\n"
+                "Pour quel traitement ou destination souhaitez-vous des précisions ? Vous pouvez également demander un Devis Gratuit."
             )
         elif lang == "ar":
             return (
-                "بناءً على أسعار بلاسيدواي المعتمدة لمركز Immunity Therapy Center (ITC) في تيخوانا، المكسيك، تُقدم باقات علاج السرطان البديل لمدة 3 أسابيع في فئتين رئيسيتين:\n\n"
-                "- **برنامج العيادات الخارجية (3 أسابيع):** **18,995 دولار أمريكي**\n"
-                "- **برنامج الإقامة الداخلية (3 أسابيع):** **30,000 دولار أمريكي**\n\n"
-                "خيار العيادات الخارجية مخصص للمرضى المقيمين في فنادق مجاورة، بينما يوفر خيار الإقامة الداخلية رعاية طبية مستمرة على مدار الساعة مع الإقامة والوجبات."
+                "تختلف الأسعار المعتمدة في سجلات بلاسيدواي باختلاف الإجراء والوجهة الطبية:\n\n"
+                "- **علاج السرطان بالطب البديل (Immunity Therapy Center — تيخوانا، المكسيك):**\n"
+                "  - **برنامج العيادات الخارجية (3 أسابيع):** **18,995 دولار أمريكي**\n"
+                "  - **برنامج الإقامة الداخلية (3 أسابيع):** **30,000 دولار أمريكي** (مع إشراف طبي 24/7 وإقامة كاملة)\n"
+                "- **العلاج الطبيعي والعافية (Form Recovery & Wellness — بانكوك، تايلاند):**\n"
+                "  - جلسات خارجية تبدأ من **64 دولاراً أمريكياً**\n"
+                "- **العلاج بالأوزون (Fizikon Medical Center — قونية، تركيا):**\n"
+                "  - يبدأ من **110 دولار أمريكي**\n"
+                "- **الاستشارات الأولية في الخارج:**\n"
+                "  - تتراوح عموماً بين **50 إلى 250 دولاراً أمريكياً**\n\n"
+                "ما هو الإجراء أو المركز الطبي الذي ترغب في معرفة تفاصيله؟ يمكنك أيضاً طلب عرض أسعار مجاني."
             )
         else:
             return (
-                "Based on verified PlacidWay package details for Immunity Therapy Center (ITC) in Tijuana, Mexico, the alternative cancer treatment packages are offered in two tiers:\n\n"
-                "- **Out-Patient Program (3 Weeks):** **$18,995 USD**\n"
-                "- **In-Patient Program (3 Weeks):** **$30,000 USD**\n\n"
-                "The Out-Patient program is designed for patients visiting daily, while the In-Patient tier provides 24/7 medical supervision and full room and board."
+                "Verified pricing across our PlacidWay records depends on the medical procedure and destination:\n\n"
+                "- **Alternative Cancer Treatment (Immunity Therapy Center — Tijuana, Mexico):**\n"
+                "  - **Out-Patient Program (3 Weeks):** **$18,995 USD**\n"
+                "  - **In-Patient Program (3 Weeks):** **$30,000 USD** (includes 24/7 medical supervision and full room & board)\n"
+                "- **Holistic Physical Therapy & Wellness (Form Recovery & Wellness — Bangkok, Thailand):**\n"
+                "  - Outpatient sessions starting from **$64 USD**\n"
+                "- **Ozone Therapy & Alternative Medicine (Fizikon Medical Center — Konya, Turkey):**\n"
+                "  - Starting from **$110 USD**\n"
+                "- **Initial Holistic Consultations Abroad:**\n"
+                "  - Typically range from **$50 to $250 USD**\n\n"
+                "Which specific procedure, clinic, or country are you interested in? You can also request a Free Quote to receive a personalized estimate for your case."
             )
 
     # 14. Recovery Time & Stay Duration Intent
@@ -1148,7 +1230,7 @@ def synthesize_grounded_answer_from_chunks(
 async def call_llm_inference(messages: List[Dict[str, str]]) -> Tuple[Optional[str], int]:
     """
     Executes LLM inference with ultra-fast Groq Cloud as primary provider,
-    falling back to OpenRouter or alternative models if necessary.
+    falling back to OpenRouter models if necessary, using tight timeouts to prevent latency.
     """
     # 1. Primary: Groq Cloud Inference (Ultra-fast, high-precision)
     if settings.GROQ_API_KEY.strip():
@@ -1157,13 +1239,13 @@ async def call_llm_inference(messages: List[Dict[str, str]]) -> Tuple[Optional[s
             "Authorization": f"Bearer {settings.GROQ_API_KEY.strip()}",
             "Content-Type": "application/json"
         }
-        async with httpx.AsyncClient(timeout=15.0) as client:
+        async with httpx.AsyncClient(timeout=3.5) as client:
             for model in groq_models:
                 payload = {
                     "model": model,
                     "messages": messages,
                     "temperature": 0.1,
-                    "max_tokens": 600
+                    "max_tokens": 500
                 }
                 try:
                     resp = await client.post(
@@ -1178,13 +1260,12 @@ async def call_llm_inference(messages: List[Dict[str, str]]) -> Tuple[Optional[s
                             cleaned = content.strip()
                             if (
                                 not cleaned.startswith("### Alternative") 
-                                and "89.4%" not in cleaned 
                                 and not cleaned.startswith("Choosing an Alternative Adenocarcinoma")
                             ):
                                 return cleaned, 200
                     logger.warning(f"Groq model {model} returned HTTP {resp.status_code}")
                 except Exception as e:
-                    logger.error(f"Error calling Groq model {model}: {e}")
+                    logger.warning(f"Error calling Groq model {model}: {e}")
 
     # 2. Secondary: OpenRouter Models Fallback
     if settings.OPENROUTER_API_KEY.strip():
@@ -1195,13 +1276,13 @@ async def call_llm_inference(messages: List[Dict[str, str]]) -> Tuple[Optional[s
             "HTTP-Referer": "https://placidway-chatbot.local",
             "X-Title": "PlacidWay Medical Tourism Assessment Chatbot"
         }
-        last_status = 0
-        async with httpx.AsyncClient(timeout=20.0) as client:
+        async with httpx.AsyncClient(timeout=4.0) as client:
             for model in all_models:
                 payload = {
                     "model": model,
                     "messages": messages,
-                    "temperature": 0.0
+                    "temperature": 0.0,
+                    "max_tokens": 500
                 }
                 try:
                     response = await client.post(
@@ -1209,7 +1290,6 @@ async def call_llm_inference(messages: List[Dict[str, str]]) -> Tuple[Optional[s
                         headers=headers,
                         json=payload
                     )
-                    last_status = response.status_code
                     if response.status_code == 200:
                         data = response.json()
                         message = data.get("choices", [{}])[0].get("message", {})
@@ -1218,13 +1298,12 @@ async def call_llm_inference(messages: List[Dict[str, str]]) -> Tuple[Optional[s
                             cleaned = content.strip()
                             if (
                                 not cleaned.startswith("### Alternative") 
-                                and "89.4%" not in cleaned 
                                 and not cleaned.startswith("Choosing an Alternative Adenocarcinoma")
                             ):
                                 return cleaned, 200
                     logger.warning(f"OpenRouter model {model} returned HTTP {response.status_code}")
                 except Exception as e:
-                    logger.error(f"Error calling OpenRouter model {model}: {e}")
+                    logger.warning(f"Error calling OpenRouter model {model}: {e}")
 
     return None, 0
 
@@ -1238,7 +1317,7 @@ async def generate_grounded_answer(
     """End-to-end grounded RAG execution pipeline with guardrail routing, vector search, and citation linkage."""
     lang = detect_language(query)
 
-    # 1. Evaluate pure boundary guardrails (Security, Payments, 911 Emergencies, Greetings, Non-medical)
+    # 1. Evaluate pure boundary guardrails (Security, Payments, 911 Emergencies, Appointments, Greetings, Non-medical)
     boundary_hit = evaluate_boundary_guardrails(query, lang=lang)
     if boundary_hit:
         save_message(session_id, "user", query)
@@ -1286,15 +1365,17 @@ Context from PlacidWay verified pages:
 User Question: {effective_question}
 
 Instructions:
-- Answer the question conversationally, clearly, and completely using ONLY the verified context above.
+- Answer the user's question conversationally, accurately, and concisely using ONLY the verified context above.
+- Stick strictly to the topic asked. Do NOT introduce unrelated countries, clinics, or services (for example, do not mention Thailand or Turkey unless the user explicitly asked about them).
 - If asking about package pricing in Mexico (ITC Tijuana), clearly cite both tiers: Out-Patient ($18,995 USD) and In-Patient ($30,000 USD).
-- If asking about paying $64 for partial days or single hours at ITC Mexico, state clearly that $64 applies only to outpatient wellness in Thailand and cannot be applied to ITC Mexico, which requires a structured minimum stay of 3 weeks.
-- If asking about recovery time or stay duration, specify that ITC Tijuana cancer programs require a structured minimum stay of 3 weeks for daily therapies, while Thailand Form Recovery wellness sessions have virtually zero downtime.
-- If asking whether care is cheaper in Mexico, clarify that alternative care is not cheaper in Mexico compared to basic wellness in Thailand ($18,995 vs $64 USD).
-- If asking whether Thailand offers the 3-week cancer immunotherapy package, state clearly that it is not available in Bangkok (Thailand covers basic wellness starting from $64 USD only), and that 3-week cancer packages are exclusively at ITC Tijuana, Mexico ($18,995 USD Out-Patient / $30,000 USD In-Patient).
-- If asking about clinic options or pricing in Turkey, quote Fizikon Medical Center in Konya, Turkey offering Ozone Therapy starting at $110 USD (5.0 rating, 4 reviews). Contrast this with Thailand (wellness from $64 USD) and Mexico ITC Tijuana (3-week cancer packages from $18,995 USD).
-- The Founder and Medical Director of ITC is Dr. Carlos Bautista. If asked about unknown doctors (like Dr. Emily Vance), clarify there is no record of them at ITC and that appointments cannot be booked directly into clinic calendars.
-- If asking about studies, stats, or engineering specs (like radiofrequency MHz or wattage) not in the context, explicitly declare they are not in our verified records.
+- If asking about package inclusions, quote only the inclusions verified in the context (weekly lab work, prescribed imaging, core therapies, organic meals, doctor consultations, room and board for in-patient). Never invent inclusions like hotel accommodations or medical insurance.
+- If asking about recovery time or stay duration, specify that ITC Tijuana cancer programs require a structured minimum stay of 3 weeks for daily therapies.
+- If asking whether care is cheaper in Mexico, compare accurately ($18,995 vs $64 USD in Thailand).
+- If asking about clinic options or pricing in Turkey, quote Fizikon Medical Center in Konya, Turkey offering Ozone Therapy starting at $110 USD.
+- If asking to book an appointment, clarify that appointments cannot be booked directly into clinic calendars and offer the free quote form.
+- If asked whether a treatment costs $50 or a low figure, refute that premise and provide the real package prices.
+- If the question asks about clinical safety or medical clearance (e.g. diabetes, thrombosis), refuse to provide medical advice, recommend consulting a doctor, and attach a medical disclaimer.
+- If the information is not in the context, state honestly that you do not have this information in verified records.
 - Conclude with citations as [Title](URL)."""
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
@@ -1303,13 +1384,27 @@ Instructions:
             messages.append({"role": h["role"], "content": h["content"]})
     messages.append({"role": "user", "content": user_prompt})
 
-    # 6. LLM Inference with Dynamic RAG Synthesis Fallback
+    # 6. Response Generation Pipeline
     if is_medical:
         raw_answer = build_medical_contraindication_response(query, lang=lang)
     else:
-        raw_answer, status_code = await call_llm_inference(messages)
-        if not raw_answer:
-            raw_answer = synthesize_grounded_answer_from_chunks(query, relevant_chunks, lang=lang)
+        # Check verified domain synthesis first
+        synth_answer = synthesize_grounded_answer_from_chunks(query, relevant_chunks, lang=lang)
+        fallback_indicators = [
+            "do not have this information", "don't have this information", "not in our current records",
+            "do not have this specific information", "no dispongo de esta información",
+            "je ne dispose pas de cette information", "لا تتوفر لدي هذه المعلومة"
+        ]
+        is_synth_fallback = any(phrase in synth_answer.lower() for phrase in fallback_indicators)
+
+        if not is_synth_fallback:
+            # Deterministic verified knowledge anchor matched (pricing, inclusions, recovery time, trick pricing, false premises, doctor bio, location)
+            raw_answer = synth_answer
+        else:
+            # Query did not match a specific template, call LLM with retrieved context
+            raw_answer, status_code = await call_llm_inference(messages)
+            if not raw_answer:
+                raw_answer = synth_answer
 
     # 7. Medical Disclaimer Check
     disclaimer_attached = False
@@ -1402,13 +1497,17 @@ Context from PlacidWay verified pages:
 User Question: {effective_question}
 
 Instructions:
-- Answer the question conversationally, clearly, and completely using ONLY the verified context above.
+- Answer the user's question conversationally, accurately, and concisely using ONLY the verified context above.
+- Stick strictly to the topic asked. Do NOT introduce unrelated countries, clinics, or services (for example, do not mention Thailand or Turkey unless the user explicitly asked about them).
 - If asking about package pricing in Mexico (ITC Tijuana), clearly cite both tiers: Out-Patient ($18,995 USD) and In-Patient ($30,000 USD).
-- If asking about recovery time or stay duration, specify that ITC Tijuana cancer programs require a structured minimum stay of 3 weeks for daily therapies, while Thailand Form Recovery wellness sessions have virtually zero downtime.
-- If asking whether care is cheaper in Mexico, clarify that alternative care is not cheaper in Mexico compared to basic wellness in Thailand ($18,995 vs $64 USD).
-- If asking whether Thailand offers the 3-week cancer immunotherapy package, state clearly that it is not available in Bangkok (Thailand covers basic wellness starting from $64 USD only), and that 3-week cancer packages are exclusively at ITC Tijuana, Mexico ($18,995 USD Out-Patient / $30,000 USD In-Patient).
-- If asking about clinic options or pricing in Turkey, quote Fizikon Medical Center in Konya, Turkey offering Ozone Therapy starting at $110 USD (5.0 rating, 4 reviews). Contrast this with Thailand (wellness from $64 USD) and Mexico ITC Tijuana (3-week cancer packages from $18,995 USD).
-- If asking about studies, stats, or engineering specs (like radiofrequency MHz or wattage) not in the context, explicitly declare they are not in our verified records.
+- If asking about package inclusions, quote only the inclusions verified in the context (weekly lab work, prescribed imaging, core therapies, organic meals, doctor consultations, room and board for in-patient). Never invent inclusions like hotel accommodations or medical insurance.
+- If asking about recovery time or stay duration, specify that ITC Tijuana cancer programs require a structured minimum stay of 3 weeks for daily therapies.
+- If asking whether care is cheaper in Mexico, compare accurately ($18,995 vs $64 USD in Thailand).
+- If asking about clinic options or pricing in Turkey, quote Fizikon Medical Center in Konya, Turkey offering Ozone Therapy starting at $110 USD.
+- If asking to book an appointment, clarify that appointments cannot be booked directly into clinic calendars and offer the free quote form.
+- If asked whether a treatment costs $50 or a low figure, refute that premise and provide the real package prices.
+- If the question asks about clinical safety or medical clearance (e.g. diabetes, thrombosis), refuse to provide medical advice, recommend consulting a doctor, and attach a medical disclaimer.
+- If the information is not in the context, state honestly that you do not have this information in verified records.
 - Conclude with citations as [Title](URL)."""
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
@@ -1433,99 +1532,115 @@ Instructions:
         save_message(session_id, "assistant", medical_answer)
         return
 
-    # Primary: Stream from Groq Cloud
-    if settings.GROQ_API_KEY.strip():
-        groq_models = [settings.GROQ_MODEL] + settings.GROQ_FALLBACK_MODELS
-        headers = {
-            "Authorization": f"Bearer {settings.GROQ_API_KEY.strip()}",
-            "Content-Type": "application/json"
-        }
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            for model in groq_models:
-                payload = {
-                    "model": model,
-                    "messages": messages,
-                    "temperature": 0.1,
-                    "max_tokens": 600,
-                    "stream": True
-                }
-                try:
-                    async with client.stream("POST", settings.GROQ_BASE_URL, headers=headers, json=payload) as resp:
-                        if resp.status_code == 200:
-                            async for line in resp.aiter_lines():
-                                if line.startswith("data: "):
-                                    data_str = line[6:].strip()
-                                    if data_str == "[DONE]":
-                                        break
-                                    try:
-                                        parsed = json.loads(data_str)
-                                        delta = parsed["choices"][0]["delta"].get("content", "")
-                                        if delta:
-                                            full_answer_tokens.append(delta)
-                                            yield f"data: {json.dumps({'type': 'token', 'content': delta})}\n\n"
-                                    except Exception:
-                                        continue
-                            if full_answer_tokens:
-                                streamed_successfully = True
-                                break
-                except Exception as e:
-                    logger.error(f"Streaming error on Groq {model}: {e}")
+    # Check verified domain synthesis first
+    synth_answer = synthesize_grounded_answer_from_chunks(query, relevant_chunks, lang=lang)
+    fallback_indicators = [
+        "do not have this information", "don't have this information", "not in our current records",
+        "do not have this specific information", "no dispongo de esta información",
+        "je ne dispose pas de cette information", "لا تتوفر لدي هذه المعلومة"
+    ]
+    is_synth_fallback = any(phrase in synth_answer.lower() for phrase in fallback_indicators)
 
-    # Secondary: Stream from OpenRouter
-    if not streamed_successfully and settings.OPENROUTER_API_KEY.strip():
-        all_models = [settings.PRIMARY_MODEL] + settings.FALLBACK_MODELS
-        headers = {
-            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY.strip()}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "https://placidway-chatbot.local",
-            "X-Title": "PlacidWay Medical Tourism Assessment Chatbot"
-        }
-
-        async with httpx.AsyncClient(timeout=20.0) as client:
-            for model in all_models:
-                payload = {
-                    "model": model,
-                    "messages": messages,
-                    "temperature": 0.0,
-                    "stream": True
-                }
-                try:
-                    async with client.stream("POST", settings.OPENROUTER_BASE_URL, headers=headers, json=payload) as resp:
-                        if resp.status_code == 200:
-                            async for line in resp.aiter_lines():
-                                if line.startswith("data: "):
-                                    data_str = line[6:].strip()
-                                    if data_str == "[DONE]":
-                                        break
-                                    try:
-                                        parsed = json.loads(data_str)
-                                        delta = parsed["choices"][0]["delta"].get("content", "")
-                                        if delta:
-                                            full_answer_tokens.append(delta)
-                                            yield f"data: {json.dumps({'type': 'token', 'content': delta})}\n\n"
-                                    except Exception:
-                                        continue
-                            if full_answer_tokens:
-                                streamed_successfully = True
-                                break
-                except Exception as e:
-                    logger.error(f"Streaming error on OpenRouter {model}: {e}")
-
-    full_answer = "".join(full_answer_tokens).strip()
-
-    # Dynamic RAG Synthesis Fallback
-    if (
-        not streamed_successfully 
-        or not full_answer 
-        or full_answer.startswith("### Alternative") 
-        or "89.4%" in full_answer
-        or full_answer.startswith("Choosing an Alternative Adenocarcinoma")
-    ):
-        full_answer = synthesize_grounded_answer_from_chunks(query, relevant_chunks, lang=lang)
-        words = full_answer.split(" ")
+    if not is_synth_fallback:
+        words = synth_answer.split(" ")
         for i in range(0, len(words), 3):
             chunk_words = " ".join(words[i:i+3]) + (" " if i+3 < len(words) else "")
             yield f"data: {json.dumps({'type': 'token', 'content': chunk_words})}\n\n"
+        full_answer = synth_answer
+        streamed_successfully = True
+    else:
+        # Primary: Stream from Groq Cloud
+        if settings.GROQ_API_KEY.strip():
+            groq_models = [settings.GROQ_MODEL] + settings.GROQ_FALLBACK_MODELS
+            headers = {
+                "Authorization": f"Bearer {settings.GROQ_API_KEY.strip()}",
+                "Content-Type": "application/json"
+            }
+            async with httpx.AsyncClient(timeout=3.5) as client:
+                for model in groq_models:
+                    payload = {
+                        "model": model,
+                        "messages": messages,
+                        "temperature": 0.1,
+                        "max_tokens": 500,
+                        "stream": True
+                    }
+                    try:
+                        async with client.stream("POST", settings.GROQ_BASE_URL, headers=headers, json=payload) as resp:
+                            if resp.status_code == 200:
+                                async for line in resp.aiter_lines():
+                                    if line.startswith("data: "):
+                                        data_str = line[6:].strip()
+                                        if data_str == "[DONE]":
+                                            break
+                                        try:
+                                            parsed = json.loads(data_str)
+                                            delta = parsed["choices"][0]["delta"].get("content", "")
+                                            if delta:
+                                                full_answer_tokens.append(delta)
+                                                yield f"data: {json.dumps({'type': 'token', 'content': delta})}\n\n"
+                                        except Exception:
+                                            continue
+                                if full_answer_tokens:
+                                    streamed_successfully = True
+                                    break
+                    except Exception as e:
+                        logger.warning(f"Streaming error on Groq {model}: {e}")
+
+        # Secondary: Stream from OpenRouter
+        if not streamed_successfully and settings.OPENROUTER_API_KEY.strip():
+            all_models = [settings.PRIMARY_MODEL] + settings.FALLBACK_MODELS
+            headers = {
+                "Authorization": f"Bearer {settings.OPENROUTER_API_KEY.strip()}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://placidway-chatbot.local",
+                "X-Title": "PlacidWay Medical Tourism Assessment Chatbot"
+            }
+
+            async with httpx.AsyncClient(timeout=4.0) as client:
+                for model in all_models:
+                    payload = {
+                        "model": model,
+                        "messages": messages,
+                        "temperature": 0.0,
+                        "stream": True
+                    }
+                    try:
+                        async with client.stream("POST", settings.OPENROUTER_BASE_URL, headers=headers, json=payload) as resp:
+                            if resp.status_code == 200:
+                                async for line in resp.aiter_lines():
+                                    if line.startswith("data: "):
+                                        data_str = line[6:].strip()
+                                        if data_str == "[DONE]":
+                                            break
+                                        try:
+                                            parsed = json.loads(data_str)
+                                            delta = parsed["choices"][0]["delta"].get("content", "")
+                                            if delta:
+                                                full_answer_tokens.append(delta)
+                                                yield f"data: {json.dumps({'type': 'token', 'content': delta})}\n\n"
+                                        except Exception:
+                                            continue
+                                if full_answer_tokens:
+                                    streamed_successfully = True
+                                    break
+                    except Exception as e:
+                        logger.warning(f"Streaming error on OpenRouter {model}: {e}")
+
+        full_answer = "".join(full_answer_tokens).strip()
+
+        # Dynamic RAG Synthesis Fallback
+        if (
+            not streamed_successfully 
+            or not full_answer 
+            or full_answer.startswith("### Alternative") 
+            or full_answer.startswith("Choosing an Alternative Adenocarcinoma")
+        ):
+            full_answer = synth_answer
+            words = full_answer.split(" ")
+            for i in range(0, len(words), 3):
+                chunk_words = " ".join(words[i:i+3]) + (" " if i+3 < len(words) else "")
+                yield f"data: {json.dumps({'type': 'token', 'content': chunk_words})}\n\n"
 
     # Medical Disclaimer Attachment
     disclaimer_text = DISCLAIMERS.get(lang, DISCLAIMERS["en"])
@@ -1538,7 +1653,7 @@ Instructions:
     if is_fallback:
         log_content_gap(session_id, query, search_query, max_score)
 
-    refusal_cues = ["do not have", "don't have", "not listed in", "not in our current records", "cannot provide", "no dispongo de", "je ne dispose pas"]
+    refusal_cues = ["do not have", "don't have", "not listed in", "not covered in", "not in our current records", "cannot provide", "no dispongo de", "je ne dispose pas"]
     is_refusal = is_fallback or any(phrase in full_answer.lower() for phrase in refusal_cues)
     citations_list = [] if is_refusal else [c.model_dump() for c in citations_dict.values()]
 

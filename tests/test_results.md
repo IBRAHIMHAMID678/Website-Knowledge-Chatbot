@@ -7,14 +7,12 @@
 
 **Bot Response:**
 
-The cost for the Alternative Adenocarcinoma Cancer Treatment at ITC in Tijuana, Mexico, is structured into two primary tiers, both of which cover a structured three-week program:
+Based on verified PlacidWay package details for Immunity Therapy Center (ITC) in Tijuana, Mexico, the alternative cancer treatment packages are offered in two tiers:
 
-*   **Out-Patient Program:** $18,995 USD
-*   **In-Patient Program:** $30,000 USD
+- **Out-Patient Program (3 Weeks):** **$18,995 USD**
+- **In-Patient Program (3 Weeks):** **$30,000 USD**
 
-The In-Patient program is specifically designed for patients who require 24/7 medical supervision or have mobility challenges. These costs cover intensive therapeutic interventions and one-on-one medical attention over the three-week duration. Please note that these packages are exclusive to ITC Tijuana; basic wellness services in other destinations, such as Thailand, start from $64 USD but do not include the 3-week cancer immunotherapy protocols offered in Mexico.
-
-[Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
+The Out-Patient program is designed for patients visiting daily, while the In-Patient tier provides 24/7 medical supervision and full room and board.
 
 **Citations:**
 - [Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
@@ -28,11 +26,12 @@ The In-Patient program is specifically designed for patients who require 24/7 me
 
 **Bot Response:**
 
-Based on the verified records, basic alternative medicine and wellness services are significantly cheaper in Thailand than in Mexico. In Thailand, Form Recovery & Wellness in Bangkok offers physiotherapy and massage services starting at just $64 USD. In contrast, alternative medicine costs in Mexico vary widely depending on the specific treatment and facility. For example, ozone therapy at Stem Health Guadalajara starts at $1,000 USD, and live cell therapy at VISANI® Stem Cells in Mexico City starts at $5,500 USD.
+Based on verified PlacidWay pricing data, alternative medicine is generally cheaper in **Thailand** for basic wellness procedures, while **Mexico** offers specialized, intensive integrative cancer protocols:
 
-It is important to note that these prices reflect different scopes of care. The $64 USD option in Thailand is for basic outpatient wellness with virtually zero downtime. If you are looking for comprehensive cancer immunotherapy packages in Mexico, specifically at ITC Tijuana, the costs are structured differently and are not comparable to basic wellness sessions. ITC Tijuana offers 3-week cancer programs with a minimum stay requirement, priced at $18,995 USD for the Out-Patient tier and $30,000 USD for the In-Patient tier. Therefore, while Thailand is cheaper for basic wellness, Mexico offers specialized, high-cost cancer treatment packages that are not available in Thailand.
+- **Thailand (Form Recovery & Wellness, Bangkok):** Alternative therapies and physical rehabilitation start from **$64 USD** per session.
+- **Mexico (Immunity Therapy Center, Tijuana):** Comprehensive 3-week cancer packages start at **$18,995 USD** for Out-Patient care and **$30,000 USD** for In-Patient care.
 
-[Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
+*(Important Scope Distinction: Thailand records cover basic outpatient physical therapy and wellness, whereas ITC Mexico provides multi-week, intensive medical protocols for advanced oncology).* Across alternative medicine providers abroad, initial consultations range from $50 to $250 USD, acupuncture ranges from $200 to $800 USD, and holistic packages average approximately $15,032 USD.
 
 **Citations:**
 - [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
@@ -46,19 +45,19 @@ It is important to note that these prices reflect different scopes of care. The 
 
 **Bot Response:**
 
-The Alternative Adenocarcinoma Cancer Treatment package at ITC Tijuana is structured as a 3-week program with two available tiers: an Out-Patient program priced at $18,995 USD and an In-Patient program priced at $30,000 USD. The In-Patient option is specifically designed for patients who require 24/7 medical supervision or have mobility challenges, while the Out-Patient program is for those who can visit the medical center daily without staying overnight.
+Based on verified PlacidWay package details, the alternative cancer treatment program includes:
 
-The Out-Patient program ($18,995 USD) includes the following verified components:
-*   **Weekly Comprehensive Lab Work:** This includes CBC, blood chemistry, immunology assessment, kidney function, metabolic and coagulation panels (TP/TPT), specific tumor markers, and urinalysis.
-*   **Prescribed Imaging:** One X-ray, ultrasound, or CT scan of one area, as directed by your ITC physician.
-*   **Core Therapies:** All alternative treatments listed as standard within the 3-week program.
-*   **Nutritional Support:** Two health-focused meals provided daily during treatment hours.
-*   **Medications:** Standard medications included in the out-patient protocol, which are discussed upon admission.
-*   **Follow-up Care:** One post-discharge consultation with an ITC doctor after 3 months.
+### Out-Patient Program ($18,995 USD):
+- **Core Alternative Therapies:** Standard non-toxic integrative protocols over 3 weeks.
+- **Diagnostic Lab Work:** Weekly CBC, blood chemistry, kidney/metabolic panels, and specific tumor markers (e.g. CEA, PSA, CA 15-3).
+- **Prescribed Imaging:** 1 X-ray, ultrasound, or CT scan included.
+- **Nutritional Support:** 2 organic, health-focused meals provided daily during treatment.
+- **Doctor Consultations & Follow-up:** Daily physician monitoring and 1 post-discharge consultation after 3 months.
 
-Please note that specific clinical outcomes or individual medical diagnoses cannot be guaranteed, and patients are encouraged to consult with their treating specialists. For a personalized clinical evaluation, you may contact PlacidWay to coordinate with ITC specialists.
-
-[Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
+### In-Patient Program ($30,000 USD):
+- **24/7 Medical Supervision:** Round-the-clock doctor and nursing care.
+- **Full Room and Board:** Private accommodations and 3 nutritious meals daily (Monday–Sunday).
+- **Pharmacy Support & Diagnostics:** Protocol-specific medications and imaging managed on-site.
 
 **Citations:**
 - [Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
@@ -90,11 +89,7 @@ This 3-week period allows the medical team to evaluate your initial response, st
 
 **Bot Response:**
 
-I cannot book an appointment for you directly, as I am an AI assistant and do not have access to real-time clinic calendars or scheduling systems. Additionally, our verified records indicate that appointments cannot be booked directly into clinic calendars through this interface.
-
-To proceed with scheduling, I recommend contacting PlacidWay’s medical coordinators or the specific clinic directly to discuss your needs and availability. If you are interested in the 3-week cancer immunotherapy programs at ITC Tijuana, please note that these require a structured minimum stay of 3 weeks, with pricing tiers of $18,995 USD for Out-Patient care and $30,000 USD for In-Patient care. For basic wellness services in Thailand, sessions start from $64 USD.
-
-[PlacidWay Medical Tourism](https://www.placidway.com)
+I cannot directly book appointments into clinic calendars. However, you can request a **Free Quote and Appointment Booking** through PlacidWay! Our dedicated patient coordinators will contact the clinic directly and arrange your travel, doctor consultations, and itinerary.
 
 
 ---

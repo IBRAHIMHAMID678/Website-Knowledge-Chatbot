@@ -13,15 +13,18 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
     GROQ_BASE_URL: str = "https://api.groq.com/openai/v1/chat/completions"
     GROQ_MODEL: str = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
-    GROQ_FALLBACK_MODELS: list[str] = []
+    GROQ_FALLBACK_MODELS: list[str] = [
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b"
+    ]
 
     # OpenRouter API Configuration
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1/chat/completions"
-    PRIMARY_MODEL: str = os.getenv("PRIMARY_MODEL", "recursive/flint-v1.0:free")
+    PRIMARY_MODEL: str = os.getenv("PRIMARY_MODEL", "nvidia/nemotron-3.5-lightning:free")
     FALLBACK_MODELS: list[str] = [
-        "cohere/north-mini-code:free",
-        "nvidia/nemotron-3.5-lightning:free"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "dots-studio/dots-3-note-preview:free"
     ]
     
     # Security Configuration
