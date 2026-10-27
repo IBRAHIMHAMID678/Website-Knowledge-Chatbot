@@ -22,7 +22,7 @@ from app.db.database import get_content_gaps, get_leads
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api")
+router = APIRouter()
 refresh_lock = asyncio.Lock()
 
 async def verify_admin_access(

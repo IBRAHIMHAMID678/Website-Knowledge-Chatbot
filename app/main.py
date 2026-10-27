@@ -45,7 +45,8 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="Production-grade AI Knowledge Chatbot grounded strictly in PlacidWay medical pages.",
-    lifespan=lifespan
+    lifespan=lifespan,
+    redirect_slashes=False
 )
 
 # Cross-Origin Resource Sharing
@@ -57,7 +58,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API routes
+# Include API routes (both /api/endpoint and /endpoint for serverless proxy resilience)
+app.include_router(router, prefix="/api")
 app.include_router(router)
 
 # Health probe for 7-day cloud deployment monitoring
