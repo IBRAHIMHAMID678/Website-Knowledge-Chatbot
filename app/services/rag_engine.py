@@ -890,6 +890,46 @@ def synthesize_grounded_answer_from_chunks(
                 "*(Note: Thailand records cover physical therapy and holistic wellness, not the intensive 3-week cancer immunotherapy programs provided at Immunity Therapy Center in Tijuana, Mexico)*."
             )
 
+    # 11b. Turkey Scope & Clinic Comparison Follow-up
+    is_turkey = bool(re.search(r"\b(turkey|turquie|turquía|تركيا|fizikon|konya)\b", q_lower))
+    if is_turkey:
+        if lang == "es":
+            return (
+                "En **Turquía**, los registros verificados de PlacidWay incluyen el siguiente centro internacional de medicina alternativa:\n\n"
+                "- **Centro:** **Fizikon Medical Center** en Konya, Turquía.\n"
+                "- **Procedimiento:** Ozonoterapia (Ozone Therapy) y Medicina Alternativa.\n"
+                "- **Precio Inicial:** Desde **$110 USD**.\n"
+                "- **Calificación:** ★★★★★ 5.0 (4 opiniones verificadas).\n\n"
+                "*(Nota de alcance: Turquía ofrece ozonoterapia a partir de $110 USD y Tailandia bienestar físico desde $64 USD; mientras que los programas integrales de 3 semanas contra el cáncer se realizan exclusivamente en Immunity Therapy Center en Tijuana, México, a partir de $18,995 USD).* Puede solicitar una cotización gratuita para Fizikon a través de PlacidWay."
+            )
+        elif lang == "fr":
+            return (
+                "En **Turquie**, les dossiers vérifiés de PlacidWay répertorient le centre de médecine alternative suivant :\n\n"
+                "- **Clinique :** **Fizikon Medical Center** à Konya, Turquie.\n"
+                "- **Intervention :** Ozonothérapie (Ozone Therapy) et Médecine Alternative.\n"
+                "- **Tarif de départ :** À partir de **110 $ USD**.\n"
+                "- **Évaluation :** ★★★★★ 5.0 (4 avis vérifiés).\n\n"
+                "*(Remarque sur le périmètre : La Turquie propose de l'ozonothérapie dès 110 $ USD et la Thaïlande du bien-être dès 64 $ USD ; en revanche, les forfaits d'oncologie intégrative de 3 semaines sont documentés pour Immunity Therapy Center à Tijuana au Mexique à partir de 18 995 $ USD).* Vous pouvez demander un devis gratuit pour Fizikon via PlacidWay."
+            )
+        elif lang == "ar":
+            return (
+                "في **تركيا**، تُظهر سجلات بلاسيدواي المعتمدة مركز الطب البديل التالي:\n\n"
+                "- **المركز:** **Fizikon Medical Center** في قونية، تركيا (Konya, Turkey).\n"
+                "- **الإجراء:** العلاج بالأوزون (Ozone Therapy) والطب البديل.\n"
+                "- **السعر المبدئي:** يبدأ من **110 دولار أمريكي**.\n"
+                "- **التقييم:** ★★★★★ 5.0 (بناءً على 4 تقييمات معتمدة).\n\n"
+                "*(ملاحظة حول النطاق: تقدم تركيا جلسات العلاج بالأوزون بدءاً من 110 دولار، وتقدم تايلاند جلسات العافية من 64 دولار؛ بينما باقات علاج السرطان البديل لمدة 3 أسابيع متوفرة في مركز ITC في تيخوانا بالمكسيك بدءاً من 18,995 دولار).* يمكنكم طلب عرض أسعار مجاني للمركز عبر بلاسيدواي."
+            )
+        else:
+            return (
+                "In **Turkey**, verified PlacidWay records feature the following international alternative medicine clinic:\n\n"
+                "- **Clinic:** **Fizikon Medical Center** in Konya, Turkey.\n"
+                "- **Procedure:** Ozone Therapy & Alternative Medicine.\n"
+                "- **Starting Price:** From **$110 USD**.\n"
+                "- **Patient Rating:** ★★★★★ 5.0 (based on 4 verified reviews).\n\n"
+                "*(Scope Distinction: Turkey provides outpatient Ozone Therapy starting at $110 USD, and Thailand offers physical therapy/wellness starting at $64 USD. In contrast, comprehensive 3-week alternative cancer immunotherapy programs are exclusively provided at Immunity Therapy Center in Tijuana, Mexico, starting at $18,995 USD Out-Patient / $30,000 USD In-Patient).* You can request a personalized quote for Fizikon directly through PlacidWay."
+            )
+
     # 12. Package Inclusions Intent
     if any(k in q_lower for k in ["what is included", "package include", "inclusions", "included in the", "qué incluye", "incluido en el", "qu'est-ce qui est inclus", "ماذا يشمل"]):
         if lang == "es":
@@ -1252,6 +1292,7 @@ Instructions:
 - If asking about recovery time or stay duration, specify that ITC Tijuana cancer programs require a structured minimum stay of 3 weeks for daily therapies, while Thailand Form Recovery wellness sessions have virtually zero downtime.
 - If asking whether care is cheaper in Mexico, clarify that alternative care is not cheaper in Mexico compared to basic wellness in Thailand ($18,995 vs $64 USD).
 - If asking whether Thailand offers the 3-week cancer immunotherapy package, state clearly that it is not available in Bangkok (Thailand covers basic wellness starting from $64 USD only), and that 3-week cancer packages are exclusively at ITC Tijuana, Mexico ($18,995 USD Out-Patient / $30,000 USD In-Patient).
+- If asking about clinic options or pricing in Turkey, quote Fizikon Medical Center in Konya, Turkey offering Ozone Therapy starting at $110 USD (5.0 rating, 4 reviews). Contrast this with Thailand (wellness from $64 USD) and Mexico ITC Tijuana (3-week cancer packages from $18,995 USD).
 - The Founder and Medical Director of ITC is Dr. Carlos Bautista. If asked about unknown doctors (like Dr. Emily Vance), clarify there is no record of them at ITC and that appointments cannot be booked directly into clinic calendars.
 - If asking about studies, stats, or engineering specs (like radiofrequency MHz or wattage) not in the context, explicitly declare they are not in our verified records.
 - Conclude with citations as [Title](URL)."""
@@ -1366,6 +1407,7 @@ Instructions:
 - If asking about recovery time or stay duration, specify that ITC Tijuana cancer programs require a structured minimum stay of 3 weeks for daily therapies, while Thailand Form Recovery wellness sessions have virtually zero downtime.
 - If asking whether care is cheaper in Mexico, clarify that alternative care is not cheaper in Mexico compared to basic wellness in Thailand ($18,995 vs $64 USD).
 - If asking whether Thailand offers the 3-week cancer immunotherapy package, state clearly that it is not available in Bangkok (Thailand covers basic wellness starting from $64 USD only), and that 3-week cancer packages are exclusively at ITC Tijuana, Mexico ($18,995 USD Out-Patient / $30,000 USD In-Patient).
+- If asking about clinic options or pricing in Turkey, quote Fizikon Medical Center in Konya, Turkey offering Ozone Therapy starting at $110 USD (5.0 rating, 4 reviews). Contrast this with Thailand (wellness from $64 USD) and Mexico ITC Tijuana (3-week cancer packages from $18,995 USD).
 - If asking about studies, stats, or engineering specs (like radiofrequency MHz or wattage) not in the context, explicitly declare they are not in our verified records.
 - Conclude with citations as [Title](URL)."""
 
