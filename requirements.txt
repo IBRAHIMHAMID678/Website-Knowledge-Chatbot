@@ -7,3 +7,4 @@ beautifulsoup4>=4.12.0
 scikit-learn>=1.4.0
 numpy>=1.26.0
 python-dotenv>=1.0.0
+groq>=0.9.0

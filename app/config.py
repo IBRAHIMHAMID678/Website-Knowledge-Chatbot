@@ -9,6 +9,12 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     ENVIRONMENT: str = "production"
     
+    # Groq Cloud API Configuration (Ultra-fast LLM Inference)
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+    GROQ_BASE_URL: str = "https://api.groq.com/openai/v1/chat/completions"
+    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
+    GROQ_FALLBACK_MODELS: list[str] = []
+
     # OpenRouter API Configuration
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1/chat/completions"

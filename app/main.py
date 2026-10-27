@@ -114,7 +114,8 @@ async def health_check():
         "status": "healthy",
         "service": settings.PROJECT_NAME,
         "chunks_indexed": len(vector_store.chunks),
-        "primary_model": settings.PRIMARY_MODEL
+        "groq_model": settings.GROQ_MODEL,
+        "primary_model": settings.GROQ_MODEL if settings.GROQ_API_KEY else settings.PRIMARY_MODEL
     }
 
 # Locate static directory across local and serverless Vercel environments
