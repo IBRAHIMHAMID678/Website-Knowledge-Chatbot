@@ -12,15 +12,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application source code
+# Copy application source code and pre-indexed knowledge base
 COPY app/ ./app/
 COPY static/ ./static/
 COPY tests/ ./tests/
+COPY data/ ./data/
 COPY README.md .
 COPY .env.example .env
-
-# Create data directories
-RUN mkdir -p data/scraped_pages
 
 EXPOSE 8000
 
