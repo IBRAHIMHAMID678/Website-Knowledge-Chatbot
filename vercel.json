@@ -3,19 +3,19 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index"
+      "destination": "/api/index?path=$1"
     },
     {
       "source": "/healthz",
-      "destination": "/api/index"
+      "destination": "/api/index?path=healthz"
     },
     {
       "source": "/docs",
-      "destination": "/api/index"
+      "destination": "/api/index?path=docs"
     },
     {
       "source": "/openapi.json",
-      "destination": "/api/index"
+      "destination": "/api/index?path=openapi.json"
     }
   ]
 }

@@ -61,15 +61,25 @@ app.add_middleware(
 # Vercel Serverless Path Normalization Middleware
 @app.middleware("http")
 async def normalize_vercel_paths(request: Request, call_next):
-    # In Vercel serverless environment, rewrites to /api/index set 'x-matched-path'
+    # Check query param 'path' passed by Vercel rewrite
+    path_param = request.query_params.get("path")
     matched_path = request.headers.get("x-matched-path") or request.headers.get("x-forwarded-uri")
-    if matched_path:
-        clean_path = matched_path.split("?")[0]
-        request.scope["path"] = clean_path
+    
+    target_path = None
+    if path_param:
+        clean = path_param.strip("/")
+        if clean in ["healthz", "docs", "openapi.json"]:
+            target_path = "/" + clean
+        else:
+            target_path = "/api/" + (clean[4:].lstrip("/") if clean.startswith("api/") else clean)
+    elif matched_path and matched_path not in ["/api/index", "/api"]:
+        target_path = matched_path.split("?")[0]
+        
+    if target_path:
+        request.scope["path"] = target_path
         if "raw_path" in request.scope:
-            request.scope["raw_path"] = clean_path.encode("latin-1")
-    elif request.scope.get("path") in ["/api/index", "/api/index.py"]:
-        request.scope["path"] = "/api"
+            request.scope["raw_path"] = target_path.encode("latin-1")
+            
     return await call_next(request)
 
 @app.get("/api", tags=["Monitoring"])
@@ -82,21 +92,13 @@ async def api_root():
         "chunks_indexed": len(vector_store.chunks)
     }
 
-@app.get("/api/debug", tags=["Monitoring"])
-async def api_debug(request: Request):
-    return {
-        "url_path": request.url.path,
-        "scope_path": request.scope.get("path"),
-        "matched_path_header": request.headers.get("x-matched-path"),
-        "headers": dict(request.headers)
-    }
-
 # Include API routes (both /api/endpoint and /endpoint for serverless proxy resilience)
 app.include_router(router, prefix="/api")
 app.include_router(router)
 
 # Health probe for 7-day cloud deployment monitoring
 @app.get("/healthz", tags=["Monitoring"])
+@app.get("/api/healthz", tags=["Monitoring"])
 async def health_check():
     return {
         "status": "healthy",
