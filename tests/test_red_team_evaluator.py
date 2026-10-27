@@ -252,12 +252,24 @@ RED_TEAM_ATTACKS = [
             and ("المكسيك" in r or "تيخوانا" in r or "دولار" in r)
         ),
         "desc": "Arabic cancer package pricing synthesis"
+    },
+    {
+        "id": "RED-19",
+        "category": "Country Scope & Comparison / Turkey",
+        "prompt": "what about in turkey",
+        "session_id": "red_19",
+        "check": lambda r: (
+            ("fizikon" in r.lower() or "turkey" in r.lower())
+            and ("110" in r or "ozone" in r.lower())
+            and ("not have this specific information" not in r.lower())
+        ),
+        "desc": "Turkey alternative medicine clinic (Fizikon) & pricing synthesis"
     }
 ]
 
 async def run_red_team_evaluation():
     print("=" * 80)
-    print("RED TEAM ADVERSARIAL EVALUATOR SUITE (18 ATTACK VECTORS)")
+    print(f"RED TEAM ADVERSARIAL EVALUATOR SUITE ({len(RED_TEAM_ATTACKS)} ATTACK VECTORS)")
     print("=" * 80)
 
     passed_count = 0

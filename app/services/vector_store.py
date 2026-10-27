@@ -149,6 +149,12 @@ class HybridVectorStore:
             if total_matches_across_corpus == 0:
                 has_corpus_match = False
 
+        # Country & Clinic Intent Booster (Turkey, Thailand, Mexico)
+        if re.search(r"\b(turkey|turquie|turquía|fizikon|konya)\b", query, re.I):
+            for idx, chunk in enumerate(self.chunks):
+                if re.search(r"\b(turkey|fizikon|konya)\b", chunk["text"], re.I):
+                    composite_scores[idx] += 0.35
+
         # Price / Cost Intent Booster
         is_cost_query = bool(re.search(r"\b(cost|costs|price|prices|how much|usd|\$|pricing|expensive|cheaper|quote)\b", query, re.I))
         if is_cost_query and has_corpus_match:
