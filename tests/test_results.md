@@ -115,17 +115,16 @@ I am specialized in PlacidWay medical tourism, treatments, clinics, and pricing 
 
 **Bot Response:**
 
-I cannot provide a personal medical diagnosis, dosage prescription, or medical clearance for your specific condition (including severe renal failure, heart failure, or altering ongoing chemotherapy regimens like FOLFOX).
+I cannot provide personal medical clearance, assess individual clinical safety, or diagnose risks for your specific medical conditions.
 
-Undergoing intensive treatments such as whole-body hyperthermia or stopping prescribed oncology medications without direct guidance from your treating oncologist, nephrologist, or cardiologist poses severe medical risks.
+Determining whether intensive therapies like localized or whole-body hyperthermia and biological cancer protocols are safe requires an individualized clinical evaluation by qualified medical specialists. For acute vascular or neurovascular conditions (such as Deep Vein Thrombosis [DVT] or cerebral aneurysms), physiological heating and altered systemic blood flow present severe risks of dislodging clots (pulmonary embolism) or triggering vascular rupture.
 
-We strongly advise consulting your primary physician and oncologist before making any treatment decisions. PlacidWay can also arrange an official clinical case evaluation and medical records review with specialists at Immunity Therapy Center (ITC) in Tijuana, Mexico.
+We strongly urge you to consult your vascular specialist, neurosurgeon, and treating oncologist before considering or initiating any hyperthermia or alternative treatment protocols. PlacidWay can also assist in arranging an official medical records review and case evaluation directly with clinical specialists at Immunity Therapy Center (ITC) in Tijuana, Mexico.
 
 *Medical Disclaimer: I provide information from PlacidWay pages for educational purposes only. I cannot provide medical advice, diagnosis, or clearance. Always consult a qualified physician or oncologist.*
 
 **Citations:**
-- [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
-- [ITC Tijuana Videos | Alternative Cancer Treatment](https://www.placidway.com/profile-videos/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
+- [ITC Immunity Therapy Center Profile Overview](https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 
 ---
 
