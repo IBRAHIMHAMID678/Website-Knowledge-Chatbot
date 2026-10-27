@@ -4,9 +4,9 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 
-from app.config import settings
+from app.config import settings, BASE_DIR
 from app.db.database import init_db
 from app.services.vector_store import vector_store
 from app.services.crawler import crawl_all_target_urls
@@ -70,11 +70,31 @@ async def health_check():
         "primary_model": settings.PRIMARY_MODEL
     }
 
-# Mount static files and serve frontend
-static_dir = Path(__file__).resolve().parent.parent / "static"
+# Locate static directory across local and serverless Vercel environments
+def resolve_static_dir() -> Path:
+    candidates = [
+        BASE_DIR / "static",
+        Path(__file__).resolve().parent.parent / "static",
+        Path.cwd() / "static",
+        Path("/var/task/static")
+    ]
+    for c in candidates:
+        if c.exists() and (c / "index.html").exists():
+            return c
+    return BASE_DIR / "static"
+
+static_dir = resolve_static_dir()
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
-    @app.get("/", include_in_schema=False)
-    async def serve_index():
-        return FileResponse(str(static_dir / "index.html"))
+@app.get("/", include_in_schema=False)
+@app.get("/api", include_in_schema=False)
+@app.get("/api/index.py", include_in_schema=False)
+async def serve_index():
+    index_file = static_dir / "index.html"
+    if index_file.exists():
+        try:
+            return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
+        except Exception:
+            return FileResponse(str(index_file))
+    return HTMLResponse("<h1>PlacidWay Knowledge Chatbot</h1><p>Application is live.</p>")
