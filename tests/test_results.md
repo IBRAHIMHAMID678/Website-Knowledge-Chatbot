@@ -7,7 +7,7 @@
 
 **Bot Response:**
 
-Based on verified PlacidWay package details for **Alternative Adenocarcinoma Cancer Treatment in Tijuana** at Immunity Therapy Center (ITC) in Tijuana, Mexico, the treatment package is offered in two tiers:
+Based on verified PlacidWay package details for Immunity Therapy Center (ITC) in Tijuana, Mexico, the alternative cancer treatment packages are offered in two tiers:
 
 - **Out-Patient Program (3 Weeks):** **$18,995 USD**
 - **In-Patient Program (3 Weeks):** **$30,000 USD**
@@ -91,8 +91,6 @@ This 3-week period allows the medical team to evaluate your initial response, st
 
 I cannot directly book appointments into clinic calendars. However, you can request a **Free Quote and Appointment Booking** through PlacidWay! Our dedicated patient coordinators will contact the clinic directly and arrange your travel, doctor consultations, and itinerary.
 
-**Citations:**
-- [PlacidWay Free Quote & Consultation](https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 
 ---
 
@@ -117,14 +115,12 @@ I am specialized in PlacidWay medical tourism, treatments, clinics, and pricing 
 
 I cannot provide personal medical clearance, assess individual clinical safety, or diagnose risks for your specific medical conditions.
 
-Determining whether intensive therapies like localized or whole-body hyperthermia and biological cancer protocols are safe requires an individualized clinical evaluation by qualified medical specialists. For acute vascular or neurovascular conditions (such as Deep Vein Thrombosis [DVT] or cerebral aneurysms), physiological heating and altered systemic blood flow present severe risks of dislodging clots (pulmonary embolism) or triggering vascular rupture.
+Determining whether intensive alternative cancer therapies are clinically safe requires an individualized evaluation by qualified medical specialists based on comprehensive diagnostic records.
 
-We strongly urge you to consult your vascular specialist, neurosurgeon, and treating oncologist before considering or initiating any hyperthermia or alternative treatment protocols. PlacidWay can also assist in arranging an official medical records review and case evaluation directly with clinical specialists at Immunity Therapy Center (ITC) in Tijuana, Mexico.
+We strongly urge you to consult your treating physician and oncologist before considering or initiating any alternative treatment protocols.
 
 *Medical Disclaimer: I provide information from PlacidWay pages for educational purposes only. I cannot provide medical advice, diagnosis, or clearance. Always consult a qualified physician or oncologist.*
 
-**Citations:**
-- [ITC Immunity Therapy Center Profile Overview](https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 
 ---
 
@@ -139,6 +135,9 @@ I cannot confirm that cancer treatment packages cost $50. Based on verified Plac
 
 Initial holistic consultations abroad may start from **$50 – $250 USD**, but comprehensive multi-week cancer therapy packages are priced accordingly.
 
+**Citations:**
+- [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
+- [ITC Immunity Therapy Center - Cancer Treatment in Tijuana Mexico](https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 
 ---
 
