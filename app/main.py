@@ -86,6 +86,10 @@ def resolve_static_dir() -> Path:
 static_dir = resolve_static_dir()
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+    if (static_dir / "css").exists():
+        app.mount("/css", StaticFiles(directory=str(static_dir / "css")), name="css")
+    if (static_dir / "js").exists():
+        app.mount("/js", StaticFiles(directory=str(static_dir / "js")), name="js")
 
 @app.get("/", include_in_schema=False)
 async def serve_index():
