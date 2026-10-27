@@ -70,12 +70,15 @@ class HybridVectorStore:
 
     def save_index(self):
         """Saves chunks and metadata to JSON file."""
-        data = {
-            "total_chunks": len(self.chunks),
-            "chunks": self.chunks
-        }
-        with open(settings.VECTOR_INDEX_PATH, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+        try:
+            data = {
+                "total_chunks": len(self.chunks),
+                "chunks": self.chunks
+            }
+            with open(settings.VECTOR_INDEX_PATH, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except (OSError, IOError, PermissionError) as e:
+            logger.warning(f"Could not persist vector index to {settings.VECTOR_INDEX_PATH} (read-only environment): {e}")
 
     def load_index(self) -> bool:
         """Loads chunks from persistent disk file if available."""
@@ -86,7 +89,10 @@ class HybridVectorStore:
                 data = json.load(f)
             chunks = data.get("chunks", [])
             if chunks:
-                self.build_index(chunks)
+                self.chunks = chunks
+                corpus = [c["text"] for c in chunks]
+                self.tfidf_matrix = self.vectorizer.fit_transform(corpus)
+                logger.info(f"Loaded existing index with {len(self.chunks)} chunks from disk.")
                 return True
         except Exception as e:
             logger.error(f"Failed to load vector index: {e}")

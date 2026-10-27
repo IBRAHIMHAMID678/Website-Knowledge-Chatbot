@@ -1,0 +1,28 @@
+# Git
+.git
+.gitignore
+
+# Tests and caches
+tests/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment and local configs
+.env
+.env.example
+.venv/
+venv/
+ENV/
+
+# Documentation and scratch files
+*.md
+!README.md
+Dockerfile
+catboost_info/
+scorer_results/
+requirements-dev.txt
+
+# Non-essential data artifacts
+data/scraped_pages/

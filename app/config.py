@@ -20,11 +20,16 @@ class Settings(BaseSettings):
     
     # Security Configuration
     ADMIN_API_KEY: str = os.getenv("ADMIN_API_KEY", "placidway_admin_key_2026")
+
+    # Supabase Cloud Database Configuration
+    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
+    SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", os.getenv("SUPABASE_SERVICE_ROLE_KEY", os.getenv("SUPABASE_ANON_KEY", "")))
     
     # Data Storage Paths
+    IS_VERCEL: bool = bool(os.getenv("VERCEL"))
     DATA_DIR: Path = BASE_DIR / "data"
-    SCRAPED_PAGES_DIR: Path = DATA_DIR / "scraped_pages"
-    DB_PATH: Path = DATA_DIR / "placidway_bot.db"
+    SCRAPED_PAGES_DIR: Path = Path("/tmp/scraped_pages") if IS_VERCEL else DATA_DIR / "scraped_pages"
+    DB_PATH: Path = Path("/tmp/placidway_bot.db") if IS_VERCEL else DATA_DIR / "placidway_bot.db"
     VECTOR_INDEX_PATH: Path = DATA_DIR / "vector_index.json"
     
     # Ingestion & Crawler Targets (Strictly these 7 URLs)
@@ -64,6 +69,13 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# Ensure required directories exist
-settings.DATA_DIR.mkdir(parents=True, exist_ok=True)
-settings.SCRAPED_PAGES_DIR.mkdir(parents=True, exist_ok=True)
+# Ensure required directories exist safely on serverless filesystems
+try:
+    settings.DATA_DIR.mkdir(parents=True, exist_ok=True)
+except (OSError, PermissionError):
+    pass
+
+try:
+    settings.SCRAPED_PAGES_DIR.mkdir(parents=True, exist_ok=True)
+except (OSError, PermissionError):
+    pass

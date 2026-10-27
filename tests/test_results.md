@@ -34,7 +34,6 @@ Based on verified PlacidWay pricing data, alternative medicine is generally chea
 Across alternative medicine providers abroad, initial consultations range from $50 to $250 USD, acupuncture ranges from $200 to $800 USD, and holistic packages average approximately $15,032 USD.
 
 **Citations:**
-- [ITC Immunity Therapy Center - Cancer Treatment in Tijuana Mexico](https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 - [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
 
 ---
@@ -62,8 +61,8 @@ Based on verified PlacidWay package details, the alternative cancer treatment pr
 
 **Citations:**
 - [Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
-- [Alternative Adrenal Cancer Treatment in Tijuana](https://www.placidway.com/package/7902/Alternative-Adrenal-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
 - [Alternative Anal Cancer Treatment in Tijuana](https://www.placidway.com/package/7901/Alternative-Anal-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
+- [Alternative Adrenal Cancer Treatment in Tijuana](https://www.placidway.com/package/7902/Alternative-Adrenal-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
 
 ---
 
@@ -80,6 +79,7 @@ This 3-week period allows the medical team to evaluate your initial response, st
 
 **Citations:**
 - [Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
+- [ITC Tijuana Videos | Alternative Cancer Treatment](https://www.placidway.com/profile-videos/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 
 ---
 
@@ -123,8 +123,8 @@ We strongly advise consulting your oncologist or primary physician. PlacidWay ca
 *Medical Disclaimer: I provide information from PlacidWay pages for educational purposes only. I cannot provide medical advice, diagnosis, or clearance. Always consult a qualified physician or oncologist.*
 
 **Citations:**
-- [ITC Tijuana Videos | Alternative Cancer Treatment](https://www.placidway.com/profile-videos/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 - [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
+- [ITC Tijuana Videos | Alternative Cancer Treatment](https://www.placidway.com/profile-videos/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 
 ---
 
@@ -139,9 +139,6 @@ I cannot confirm that cancer treatment packages cost $50. Based on verified Plac
 
 Initial holistic consultations abroad may start from **$50 – $250 USD**, but comprehensive multi-week cancer therapy packages are priced accordingly.
 
-**Citations:**
-- [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
-- [ITC Immunity Therapy Center - Cancer Treatment in Tijuana Mexico](https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 
 ---
 

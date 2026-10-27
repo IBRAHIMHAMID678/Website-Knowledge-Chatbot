@@ -68,3 +68,27 @@ def test_direct_booking_guardrail():
     assert response.status_code == 200
     data = response.json()
     assert "cannot directly book" in data["answer"].lower() or "free quote" in data["answer"].lower()
+
+def test_database_operations_and_fallback():
+    from app.db.database import (
+        save_lead, get_leads,
+        log_content_gap, get_content_gaps,
+        save_message, get_session_history
+    )
+    # 1. Lead creation and retrieval
+    lead_id = save_lead("test_db_session", "Jane Doe", "jane@example.com", "+123456789", "Cancer Package", "Notes")
+    assert lead_id is not None
+    leads = get_leads(limit=10)
+    assert any(l["email"] == "jane@example.com" for l in leads)
+
+    # 2. Content gap logging and retrieval
+    log_content_gap("test_db_session", "Unknown procedure query", rewritten_query="", max_score=0.1, language="en")
+    gaps = get_content_gaps(limit=10)
+    assert any(g["query"] == "Unknown procedure query" for g in gaps)
+
+    # 3. Chat message saving and retrieval
+    save_message("test_db_session", "user", "Hello there")
+    save_message("test_db_session", "assistant", "Hello! How can I help?")
+    history = get_session_history("test_db_session", limit=5)
+    assert len(history) >= 2
+    assert history[-1]["content"] == "Hello! How can I help?"

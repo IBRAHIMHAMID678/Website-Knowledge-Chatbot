@@ -65,11 +65,14 @@ async def crawl_all_target_urls() -> Tuple[List[Dict[str, Any]], List[Dict[str, 
                     parsed = parse_placidway_html(html, url)
                     parsed_pages.append(parsed)
                     
-                    # Save raw/clean cached page for offline audit
-                    safe_filename = "".join(c if c.isalnum() else "_" for c in url.split("/")[-1])[:50]
-                    cache_file = settings.SCRAPED_PAGES_DIR / f"{safe_filename}.json"
-                    with open(cache_file, "w", encoding="utf-8") as f:
-                        json.dump(parsed, f, indent=2, ensure_ascii=False)
+                    # Save raw/clean cached page for offline audit (safely caught on read-only serverless filesystems)
+                    try:
+                        safe_filename = "".join(c if c.isalnum() else "_" for c in url.split("/")[-1])[:50]
+                        cache_file = settings.SCRAPED_PAGES_DIR / f"{safe_filename}.json"
+                        with open(cache_file, "w", encoding="utf-8") as f:
+                            json.dump(parsed, f, indent=2, ensure_ascii=False)
+                    except (OSError, PermissionError) as e:
+                        logger.debug(f"Could not write cache file {cache_file}: {e}")
                         
                     chunks = chunk_document(parsed)
                     all_chunks.extend(chunks)
