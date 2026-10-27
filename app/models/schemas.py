@@ -7,9 +7,9 @@ class Citation(BaseModel):
     snippet: Optional[str] = Field(None, description="Relevant contextual snippet")
 
 class ChatRequest(BaseModel):
-    message: str = Field(..., min_length=1, description="Visitor's question")
-    session_id: Optional[str] = Field(default="default_session", description="Session identifier for multi-turn history")
-    language: Optional[str] = Field(default="auto", description="Preferred response language")
+    message: str = Field(..., min_length=1, max_length=3000, description="Visitor's question")
+    session_id: Optional[str] = Field(default="default_session", max_length=128, description="Session identifier for multi-turn history")
+    language: Optional[str] = Field(default="auto", max_length=10, description="Preferred response language")
 
 class ChatResponse(BaseModel):
     answer: str = Field(..., description="Grounded response text")
@@ -20,12 +20,12 @@ class ChatResponse(BaseModel):
     session_id: str
 
 class LeadCreate(BaseModel):
-    full_name: str = Field(..., min_length=2, description="Patient's full name")
-    email: str = Field(..., description="Patient's email address")
-    phone: Optional[str] = Field(default="", description="Patient's phone number")
-    session_id: Optional[str] = Field(default="default_session")
-    treatment_interest: Optional[str] = Field(default="", description="Treatment or package of interest")
-    notes: Optional[str] = Field(default="")
+    full_name: str = Field(..., min_length=2, max_length=120, description="Patient's full name")
+    email: str = Field(..., min_length=5, max_length=180, description="Patient's email address")
+    phone: Optional[str] = Field(default="", max_length=50, description="Patient's phone number")
+    session_id: Optional[str] = Field(default="default_session", max_length=128)
+    treatment_interest: Optional[str] = Field(default="", max_length=200, description="Treatment or package of interest")
+    notes: Optional[str] = Field(default="", max_length=1500)
 
 class LeadResponse(BaseModel):
     success: bool

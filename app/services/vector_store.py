@@ -166,6 +166,14 @@ class HybridVectorStore:
                     if len(chunk_text) > 180:
                         composite_scores[idx] += 0.22
 
+        # Location / Address Intent Booster
+        is_location_query = bool(re.search(r"\b(where|location|located|address|directions?|how to get to|near)\b", query, re.I))
+        if is_location_query:
+            for idx, chunk in enumerate(self.chunks):
+                chunk_text = chunk["text"]
+                if re.search(r"\b(Blvd\.?\s+Padre\s+Kino|Zona\s+Urbana|Tijuana,\s+B\.C\.|Location:)\b", chunk_text, re.I):
+                    composite_scores[idx] += 0.30
+
         # Penalize tiny orphan fragment chunks (< 90 chars) so complete lists always rank higher
         for idx, chunk in enumerate(self.chunks):
             if len(chunk["clean_content"].strip()) < 90:

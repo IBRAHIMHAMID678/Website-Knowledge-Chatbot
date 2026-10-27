@@ -28,10 +28,10 @@ The Out-Patient program is designed for patients visiting daily, while the In-Pa
 
 Based on verified PlacidWay pricing data, alternative medicine is generally cheaper in **Thailand** for basic wellness procedures, while **Mexico** offers specialized, intensive integrative cancer protocols:
 
-- **Thailand (Form Recovery & Wellness, Bangkok):** Alternative therapies start from **$64 USD**.
+- **Thailand (Form Recovery & Wellness, Bangkok):** Alternative therapies and physical rehabilitation start from **$64 USD** per session.
 - **Mexico (Immunity Therapy Center, Tijuana):** Comprehensive 3-week cancer packages start at **$18,995 USD** for Out-Patient care and **$30,000 USD** for In-Patient care.
 
-Across alternative medicine providers abroad, initial consultations range from $50 to $250 USD, acupuncture ranges from $200 to $800 USD, and holistic packages average approximately $15,032 USD.
+*(Important Scope Distinction: Thailand records cover basic outpatient physical therapy and wellness, whereas ITC Mexico provides multi-week, intensive medical protocols for advanced oncology).* Across alternative medicine providers abroad, initial consultations range from $50 to $250 USD, acupuncture ranges from $200 to $800 USD, and holistic packages average approximately $15,032 USD.
 
 **Citations:**
 - [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
@@ -79,7 +79,6 @@ This 3-week period allows the medical team to evaluate your initial response, st
 
 **Citations:**
 - [Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
-- [ITC Tijuana Videos | Alternative Cancer Treatment](https://www.placidway.com/profile-videos/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 
 ---
 
@@ -116,9 +115,11 @@ I am specialized in PlacidWay medical tourism, treatments, clinics, and pricing 
 
 **Bot Response:**
 
-I cannot provide a personal medical diagnosis or medical clearance for your specific condition. Whether alternative treatment is clinically safe and suitable depends on a comprehensive physician review of your medical records and pathology.
+I cannot provide a personal medical diagnosis, dosage prescription, or medical clearance for your specific condition (including severe renal failure, heart failure, or altering ongoing chemotherapy regimens like FOLFOX).
 
-We strongly advise consulting your oncologist or primary physician. PlacidWay can also arrange an official clinical case evaluation with specialists at Immunity Therapy Center (ITC) in Tijuana, Mexico.
+Undergoing intensive treatments such as whole-body hyperthermia or stopping prescribed oncology medications without direct guidance from your treating oncologist, nephrologist, or cardiologist poses severe medical risks.
+
+We strongly advise consulting your primary physician and oncologist before making any treatment decisions. PlacidWay can also arrange an official clinical case evaluation and medical records review with specialists at Immunity Therapy Center (ITC) in Tijuana, Mexico.
 
 *Medical Disclaimer: I provide information from PlacidWay pages for educational purposes only. I cannot provide medical advice, diagnosis, or clearance. Always consult a qualified physician or oncologist.*
 

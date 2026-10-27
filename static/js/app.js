@@ -472,9 +472,12 @@ chatForm.addEventListener("submit", async (e) => {
           try {
             const parsed = JSON.parse(dataStr);
             if (parsed.type === "token") {
+              const isAtBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < 120;
               fullText += parsed.content;
               assistantBubble.innerHTML = formatMarkdown(fullText);
-              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+              if (isAtBottom) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+              }
             } else if (parsed.type === "meta") {
               citations = parsed.citations || [];
               leadRec = parsed.lead_recommended || false;

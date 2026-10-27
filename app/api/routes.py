@@ -1,8 +1,10 @@
 import asyncio
 import time
+import secrets
 import logging
+from collections import defaultdict
 from typing import List, Dict, Any, Optional
-from fastapi import APIRouter, HTTPException, BackgroundTasks, Header, Query, Depends
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Header, Query, Depends, Request
 from fastapi.responses import StreamingResponse
 
 from app.config import settings
@@ -25,13 +27,33 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 refresh_lock = asyncio.Lock()
 
+# In-memory sliding-window rate limiter per client IP
+_RATE_LIMIT_BUCKETS: Dict[str, List[float]] = defaultdict(list)
+_MAX_REQUESTS_PER_MINUTE = 60
+
+def enforce_rate_limit(request: Request):
+    client_ip = request.client.host if request.client else "unknown_client"
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        client_ip = forwarded.split(",")[0].strip()
+        
+    now = time.time()
+    timestamps = [t for t in _RATE_LIMIT_BUCKETS[client_ip] if now - t < 60.0]
+    if len(timestamps) >= _MAX_REQUESTS_PER_MINUTE:
+        raise HTTPException(
+            status_code=429,
+            detail="Rate limit exceeded. Maximum 60 requests per minute. Please wait a moment."
+        )
+    timestamps.append(now)
+    _RATE_LIMIT_BUCKETS[client_ip] = timestamps
+
 async def verify_admin_access(
     x_admin_key: Optional[str] = Header(None, alias="X-Admin-Key"),
     admin_key: Optional[str] = Query(None, alias="api_key")
 ):
-    """Protects sensitive patient lead data and content gaps from unauthorized public exposure."""
+    """Protects sensitive patient lead data using timing-safe credential verification."""
     provided_key = x_admin_key or admin_key
-    if not provided_key or provided_key != settings.ADMIN_API_KEY:
+    if not provided_key or not secrets.compare_digest(provided_key, settings.ADMIN_API_KEY):
         raise HTTPException(
             status_code=401,
             detail="Unauthorized: Admin access required. Provide 'X-Admin-Key' header or '?api_key=...' query parameter."

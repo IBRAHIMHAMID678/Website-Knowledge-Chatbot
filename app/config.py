@@ -47,7 +47,7 @@ class Settings(BaseSettings):
     CRAWL_DELAY_SECONDS: float = 1.0
     
     # Grounding & Retrieval Thresholds
-    SIMILARITY_THRESHOLD: float = 0.20
+    SIMILARITY_THRESHOLD: float = 0.08
     TOP_K_CHUNKS: int = 5
     
     # Disclaimer text
