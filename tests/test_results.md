@@ -7,12 +7,12 @@
 
 **Bot Response:**
 
-The cost for the Alternative Adenocarcinoma Cancer Treatment at ITC in Tijuana, Mexico, is structured into two primary tiers, both of which cover a structured three-week program of intensive therapeutic interventions:
+The cost for the Alternative Adenocarcinoma Cancer Treatment package at ITC in Tijuana, Mexico, depends on the level of care required. The program is structured as a three-week intensive therapeutic intervention with the following tiers:
 
 *   **Out-Patient Program:** $18,995 USD
 *   **In-Patient Program:** $30,000 USD
 
-The In-Patient program is specifically designed for patients who require 24/7 medical supervision or have mobility challenges. These costs reflect a high-value medical investment that includes one-on-one medical attention and non-toxic therapies combined with immunotherapy to target glandular cancer cells.
+The In-Patient program is specifically designed for patients who require 24/7 medical supervision or have mobility challenges. Both options provide one-on-one medical attention over the three-week duration.
 
 [Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
 
@@ -28,12 +28,15 @@ The In-Patient program is specifically designed for patients who require 24/7 me
 
 **Bot Response:**
 
-Based on verified PlacidWay pricing data, alternative medicine is generally cheaper in **Thailand** for basic wellness procedures, while **Mexico** offers specialized, intensive integrative cancer protocols:
+Based on the verified records, alternative medicine is significantly cheaper in Thailand for basic wellness services compared to the specialized cancer treatment packages offered in Mexico.
 
-- **Thailand (Form Recovery & Wellness, Bangkok):** Alternative therapies and physical rehabilitation start from **$64 USD** per session.
-- **Mexico (Immunity Therapy Center, Tijuana):** Comprehensive 3-week cancer packages start at **$18,995 USD** for Out-Patient care and **$30,000 USD** for In-Patient care.
+In Thailand, Form Recovery & Wellness in Bangkok offers basic wellness services, such as physiotherapy and massage, starting from **$64 USD**. This option is designed for general wellness with virtually zero downtime.
 
-*(Important Scope Distinction: Thailand records cover basic outpatient physical therapy and wellness, whereas ITC Mexico provides multi-week, intensive medical protocols for advanced oncology).* Across alternative medicine providers abroad, initial consultations range from $50 to $250 USD, acupuncture ranges from $200 to $800 USD, and holistic packages average approximately $15,032 USD.
+In contrast, the specialized cancer immunotherapy programs at ITC Tijuana in Mexico are structured 3-week programs with a minimum stay requirement for daily therapies. These packages are priced at **$18,995 USD** for the Out-Patient tier and **$30,000 USD** for the In-Patient tier. It is important to clarify that the $64 USD rate applies only to outpatient wellness in Thailand and cannot be applied to ITC Mexico, which requires a structured minimum stay of 3 weeks. Additionally, Thailand does not offer the 3-week cancer immunotherapy package; that specific treatment is exclusive to ITC Tijuana.
+
+Therefore, while Thailand is cheaper for basic wellness, Mexico offers comprehensive, high-cost cancer care packages that are not available in Thailand.
+
+[Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
 
 **Citations:**
 - [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
@@ -47,42 +50,19 @@ Based on verified PlacidWay pricing data, alternative medicine is generally chea
 
 **Bot Response:**
 
-Certainly, I can provide information about the alternative adenocarcinoma treatment package offered at ITC Tijuana, Mexico. The Out-Patient program costs $18,995 USD, while the In-Patient program costs $30,000 USD.
+The Alternative Adenocarcinoma Cancer Treatment package at ITC Tijuana is structured as a 3-week program designed for patients who can attend daily therapies without requiring overnight stays. The Out-Patient tier is priced at $18,995 USD, while the In-Patient tier, which is specifically designed for those requiring 24/7 medical supervision or facing mobility challenges, is priced at $30,000 USD.
 
-The package includes the following:
+The Out-Patient program includes the following verified components:
+*   **Weekly Comprehensive Lab Work:** This includes CBC, blood chemistry, immunology assessment, kidney function, metabolic and coagulation panels (TP/TPT), specific tumor markers, and urinalysis.
+*   **Prescribed Imaging:** One X-ray, ultrasound, or CT scan of one area, as directed by your ITC physician.
+*   **Core Therapies:** All alternative treatments listed as standard within the 3-week program.
+*   **Nutritional Support:** Two health-focused meals provided daily during treatment hours.
+*   **Medications:** Standard medications included in the out-patient protocol, which are discussed upon admission.
+*   **Follow-up Care:** One post-discharge consultation with an ITC doctor after 3 months.
 
-### Included in the Out-Patient Program ($18,995 USD)
+Please note that this is an alternative treatment program and does not guarantee clinical outcomes or cures. For individual medical clearance or specific contraindications, it is essential to consult with your treating specialist or oncologist.
 
-
-The Out-Patient program includes the following:
-
-1. Weekly Comprehensive Cancer Immunotherapy: This treatment is designed to boost the patient's immune system to fight cancer cells.
-2. Weekly Comprehensive Wellness: This program focuses on overall health and wellness, including dietary guidance and lifestyle recommendations.
-3. Weekly Health Check-ups: Regular monitoring of the patient's condition and progress during the treatment process.
-4. Weekly Nutritional Support: Nutritionists will provide personalized meal plans and nutritional guidance.
-5. Weekly Medical Consultations: Patients will receive consultations with ITC doctors and medical team.
-6. Weekly Accommodation: Accommodation at a comfortable hotel for the duration of the program.
-7. Weekly Transportation: Daily transportation to and from the clinic for the duration of the program.
-8. Weekly Wellness Activities: Engaging activities to promote relaxation and wellness during the treatment process.
-9. Weekly Medical Records: Regular medical records to track the patient's progress and treatment outcomes.
-10. Weekly Medical Insurance: Medical insurance coverage is not included in the package, but patients can discuss options with ITC for assistance.
-
-
-
-Please note that the In-Patient program includes all the above services plus:
-### Included in the In-Patient Program ($30,000 USD)
-
-
-1. Weekly Comprehensive Cancer Immunotherapy: This treatment is designed to boost the patient's immune system to fight cancer cells.
-2. Weekly Comprehensive Wellness: This program focuses on overall health and wellness, including dietary guidance and lifestyle recommendations.
-3. Weekly Health Check-ups: Regular monitoring of the patient's condition and progress during the treatment process.
-4. Weekly Nutritional Support: Nutritionists will provide personalized meal plans and nutritional guidance.
-5. Weekly Medical Consultations: Patients will receive consultations with ITC doctors and medical team.
-6. Weekly Accommodation: Accommodation at a comfortable hotel for the duration of the program.
-7. Weekly Transportation: Daily transportation to and from the clinic for the duration of the program.
-8. Weekly Wellness Activities: Engaging activities to promote relaxation and wellness during the treatment process.
-9. Weekly Medical Records: Regular medical records to track the patient's progress and treatment outcomes.
-10. Weekly Medical Insurance: Medical insurance
+[Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
 
 **Citations:**
 - [Alternative Adenocarcinoma Cancer Treatment in Tijuana](https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC)
@@ -116,9 +96,9 @@ This 3-week period allows the medical team to evaluate your initial response, st
 
 I cannot book an appointment for you directly, as I am an AI assistant and do not have access to real-time clinic calendars or scheduling systems. Additionally, our verified records indicate that appointments cannot be booked directly into clinic calendars through this interface.
 
-To proceed with scheduling, I recommend contacting PlacidWay’s medical tourism coordinators directly. They can assist you in evaluating your specific medical needs and coordinating with the appropriate specialists, such as Dr. Carlos Bautista, the Founder and Medical Director of ITC Tijuana, if you are interested in their cancer care programs.
+To proceed with scheduling, I recommend contacting PlacidWay’s medical tourism specialists directly. They can assist you in coordinating with the appropriate clinic, such as ITC Tijuana (where the Founder and Medical Director is Dr. Carlos Bautista), to arrange a clinical evaluation and discuss available treatment options.
 
-For more information on available treatments and to initiate a clinical evaluation, please visit our website: [PlacidWay Medical Tourism](https://www.placidway.com).
+[PlacidWay Medical Tourism](https://www.placidway.com)
 
 
 ---
@@ -165,7 +145,6 @@ I cannot confirm that cancer treatment packages cost $50. Based on verified Plac
 Initial holistic consultations abroad may start from **$50 – $250 USD**, but comprehensive multi-week cancer therapy packages are priced accordingly.
 
 **Citations:**
-- [Alternative Medicine Cost Abroad - Compare Prices 2026](https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1)
 - [ITC Immunity Therapy Center - Cancer Treatment in Tijuana Mexico](https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center)
 
 ---
