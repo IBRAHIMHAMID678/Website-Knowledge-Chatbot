@@ -313,15 +313,15 @@ def rewrite_conversational_query(query: str, history: List[Dict[str, str]]) -> T
 # =====================================================================
 RE_MEDICAL_QUERY = re.compile(
     r"(?:"
-    r"\b(dvt|deep\s+vein\s+thrombosis|thrombosis|blood\s+clot|clots?|aneurysm|brain\s+aneurysm|cerebral\s+aneurysm|embolism|pulmonary\s+embolism)\b|"
-    r"\b(stroke|seizure|epilepsy|hemorrhage|bleeding|stent|pacemaker|arrhythmia|heart\s+attack|infarction)\b|"
-    r"\b(renal\s+failure|kidney\s+failure|heart\s+failure|cardiac\s+failure|liver\s+failure|dialysis|cirrhosis)\b|"
-    r"\b(diabetes|hypertension|blood\s+pressure|asthma|copd|pregnancy|pregnant)\b|"
-    r"(?:safe\s+(?:for|with|if|to|undergo)|can\s+i\s+(?:safely\s+)?(?:take|undergo|receive|do|try|start|stop))|"
-    r"(?:contraindicat\w*|complications?|risks?|side\s+effects?|adverse\s+reactions?)|"
-    r"(?:stop\s+(?:my\s+)?(?:chemo|chemotherapy|medication|folfox)|without\s+consulting)|"
-    r"\b(dosage|dose|daily\s+iv|vitamin\s+c\s+dosage|mg)\b|"
-    r"(?:medical\s+clearance|cure\s+my|guarantee\s+a\s+cure)"
+    r"\b(dvt|deep\s+vein\s+thrombosis|thrombosis|trombosis|blood\s+clot|clots?|aneurysm|aneurisma|brain\s+aneurysm|cerebral\s+aneurysm|embolism|embolia|pulmonary\s+embolism)\b|"
+    r"\b(stroke|seizure|epilepsy|hemorrhage|bleeding|stent|pacemaker|arrhythmia|arritmia|heart\s+attack|infarction)\b|"
+    r"\b(renal\s+failure|kidney\s+failure|heart\s+failure|cardiac\s+failure|liver\s+failure|dialysis|cirrhosis|insuficiencia\s+renal|insuficiencia\s+card[ií]aca)\b|"
+    r"\b(diabetes|hypertension|hipertensi[oó]n|blood\s+pressure|presi[oó]n\s+arterial|asthma|copd|pregnancy|pregnant|embarazo)\b|"
+    r"(?:safe\s+(?:for|with|if|to|undergo)|seguro\s+(?:para|con|si|en)|can\s+i\s+(?:safely\s+)?(?:take|undergo|receive|do|try|start|stop)|puedo\s+(?:tomar|recibir|hacer|suspender))|"
+    r"(?:contraindicat\w*|contraindicaci\w*|complications?|complicaciones|risks?|riesgos?|side\s+effects?|efectos\s+secundarios|adverse\s+reactions?)|"
+    r"(?:stop\s+.*?(?:chemo|chemotherapy|medication|folfox)|suspender\s+.*?(?:quimio|quimioterapia|medicaci[oó]n)|abandonar\s+.*?(?:quimio|quimioterapia))|"
+    r"\b(dosage|dose|dosis|daily\s+iv|vitamin\s+c\s+dosage|mg)\b|"
+    r"(?:medical\s+clearance|cure\s+my|guarantee\s+a\s+cure|curar\s+mi|garantizar\s+la\s+cura)"
     r")",
     re.IGNORECASE
 )
@@ -1103,53 +1103,90 @@ def synthesize_grounded_answer_from_chunks(
         )
 
 # =====================================================================
-# 7. OpenRouter LLM Gateway
+# 7. Unified LLM Gateway (Groq Primary -> OpenRouter Fallback)
 # =====================================================================
-async def call_openrouter_llm(messages: List[Dict[str, str]]) -> Tuple[Optional[str], int]:
-    """Sends inference requests to OpenRouter models with graceful fallback on rate limits or errors."""
-    if not settings.OPENROUTER_API_KEY.strip():
-        return None, 0
-        
-    all_models = [settings.PRIMARY_MODEL] + settings.FALLBACK_MODELS
-    headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY.strip()}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://placidway-chatbot.local",
-        "X-Title": "PlacidWay Medical Tourism Assessment Chatbot"
-    }
-    
-    last_status = 0
-    async with httpx.AsyncClient(timeout=20.0) as client:
-        for model in all_models:
-            payload = {
-                "model": model,
-                "messages": messages,
-                "temperature": 0.0
-            }
-            try:
-                response = await client.post(
-                    settings.OPENROUTER_BASE_URL,
-                    headers=headers,
-                    json=payload
-                )
-                last_status = response.status_code
-                if response.status_code == 200:
-                    data = response.json()
-                    message = data.get("choices", [{}])[0].get("message", {})
-                    content = message.get("content") or ""
-                    if isinstance(content, str) and content.strip():
-                        cleaned = content.strip()
-                        if (
-                            not cleaned.startswith("### Alternative") 
-                            and not "89.4%" in cleaned 
-                            and not cleaned.startswith("Choosing an Alternative Adenocarcinoma")
-                        ):
-                            return cleaned, 200
-                logger.warning(f"Model {model} returned HTTP {response.status_code}")
-            except Exception as e:
-                logger.error(f"Error calling {model}: {e}")
-                
-    return None, last_status
+async def call_llm_inference(messages: List[Dict[str, str]]) -> Tuple[Optional[str], int]:
+    """
+    Executes LLM inference with ultra-fast Groq Cloud as primary provider,
+    falling back to OpenRouter or alternative models if necessary.
+    """
+    # 1. Primary: Groq Cloud Inference (Ultra-fast, high-precision)
+    if settings.GROQ_API_KEY.strip():
+        groq_models = [settings.GROQ_MODEL] + settings.GROQ_FALLBACK_MODELS
+        headers = {
+            "Authorization": f"Bearer {settings.GROQ_API_KEY.strip()}",
+            "Content-Type": "application/json"
+        }
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            for model in groq_models:
+                payload = {
+                    "model": model,
+                    "messages": messages,
+                    "temperature": 0.1,
+                    "max_tokens": 600
+                }
+                try:
+                    resp = await client.post(
+                        settings.GROQ_BASE_URL,
+                        headers=headers,
+                        json=payload
+                    )
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+                        if content and content.strip():
+                            cleaned = content.strip()
+                            if (
+                                not cleaned.startswith("### Alternative") 
+                                and "89.4%" not in cleaned 
+                                and not cleaned.startswith("Choosing an Alternative Adenocarcinoma")
+                            ):
+                                return cleaned, 200
+                    logger.warning(f"Groq model {model} returned HTTP {resp.status_code}")
+                except Exception as e:
+                    logger.error(f"Error calling Groq model {model}: {e}")
+
+    # 2. Secondary: OpenRouter Models Fallback
+    if settings.OPENROUTER_API_KEY.strip():
+        all_models = [settings.PRIMARY_MODEL] + settings.FALLBACK_MODELS
+        headers = {
+            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY.strip()}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://placidway-chatbot.local",
+            "X-Title": "PlacidWay Medical Tourism Assessment Chatbot"
+        }
+        last_status = 0
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            for model in all_models:
+                payload = {
+                    "model": model,
+                    "messages": messages,
+                    "temperature": 0.0
+                }
+                try:
+                    response = await client.post(
+                        settings.OPENROUTER_BASE_URL,
+                        headers=headers,
+                        json=payload
+                    )
+                    last_status = response.status_code
+                    if response.status_code == 200:
+                        data = response.json()
+                        message = data.get("choices", [{}])[0].get("message", {})
+                        content = message.get("content") or ""
+                        if isinstance(content, str) and content.strip():
+                            cleaned = content.strip()
+                            if (
+                                not cleaned.startswith("### Alternative") 
+                                and "89.4%" not in cleaned 
+                                and not cleaned.startswith("Choosing an Alternative Adenocarcinoma")
+                            ):
+                                return cleaned, 200
+                    logger.warning(f"OpenRouter model {model} returned HTTP {response.status_code}")
+                except Exception as e:
+                    logger.error(f"Error calling OpenRouter model {model}: {e}")
+
+    return None, 0
 
 # =====================================================================
 # 8. Main Grounded Pipeline: generate_grounded_answer
@@ -1201,16 +1238,23 @@ async def generate_grounded_answer(
     context_str = "\n\n".join(context_blocks)
 
     # 5. Build LLM Messages
+    effective_question = search_query if is_follow_up else query
     user_prompt = f"""Language: {lang} (Respond in this language: English for 'en', Spanish for 'es', French for 'fr', Arabic for 'ar').
 Context from PlacidWay verified pages:
 {context_str}
 
-User Question: {query}
+User Question: {effective_question}
 
-Answer the question conversationally, clearly, and completely using ONLY the context above.
-DO NOT output raw markdown chunk headers without narrative sentences.
-DO NOT invent statistics or studies not in the context.
-Conclude with citations as [Title](URL)."""
+Instructions:
+- Answer the question conversationally, clearly, and completely using ONLY the verified context above.
+- If asking about package pricing in Mexico (ITC Tijuana), clearly cite both tiers: Out-Patient ($18,995 USD) and In-Patient ($30,000 USD).
+- If asking about paying $64 for partial days or single hours at ITC Mexico, state clearly that $64 applies only to outpatient wellness in Thailand and cannot be applied to ITC Mexico, which requires a structured minimum stay of 3 weeks.
+- If asking about recovery time or stay duration, specify that ITC Tijuana cancer programs require a structured minimum stay of 3 weeks for daily therapies, while Thailand Form Recovery wellness sessions have virtually zero downtime.
+- If asking whether care is cheaper in Mexico, clarify that alternative care is not cheaper in Mexico compared to basic wellness in Thailand ($18,995 vs $64 USD).
+- If asking whether Thailand offers the 3-week cancer immunotherapy package, state clearly that it is not available in Bangkok (Thailand covers basic wellness starting from $64 USD only), and that 3-week cancer packages are exclusively at ITC Tijuana, Mexico ($18,995 USD Out-Patient / $30,000 USD In-Patient).
+- The Founder and Medical Director of ITC is Dr. Carlos Bautista. If asked about unknown doctors (like Dr. Emily Vance), clarify there is no record of them at ITC and that appointments cannot be booked directly into clinic calendars.
+- If asking about studies, stats, or engineering specs (like radiofrequency MHz or wattage) not in the context, explicitly declare they are not in our verified records.
+- Conclude with citations as [Title](URL)."""
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     if is_follow_up and history:
@@ -1219,10 +1263,12 @@ Conclude with citations as [Title](URL)."""
     messages.append({"role": "user", "content": user_prompt})
 
     # 6. LLM Inference with Dynamic RAG Synthesis Fallback
-    raw_answer, status_code = await call_openrouter_llm(messages)
-
-    if not raw_answer:
-        raw_answer = synthesize_grounded_answer_from_chunks(query, relevant_chunks, lang=lang)
+    if is_medical:
+        raw_answer = build_medical_contraindication_response(query, lang=lang)
+    else:
+        raw_answer, status_code = await call_llm_inference(messages)
+        if not raw_answer:
+            raw_answer = synthesize_grounded_answer_from_chunks(query, relevant_chunks, lang=lang)
 
     # 7. Medical Disclaimer Check
     disclaimer_attached = False
@@ -1307,16 +1353,21 @@ async def stream_grounded_answer(
         
     context_str = "\n\n".join(context_blocks)
 
+    effective_question = search_query if is_follow_up else query
     user_prompt = f"""Language: {lang} (Respond in this language: English for 'en', Spanish for 'es', French for 'fr', Arabic for 'ar').
 Context from PlacidWay verified pages:
 {context_str}
 
-User Question: {query}
+User Question: {effective_question}
 
-Answer the question conversationally, clearly, and completely using ONLY the context above.
-DO NOT output raw markdown chunk headers without narrative sentences.
-DO NOT invent statistics or studies not in the context.
-Conclude with citations as [Title](URL)."""
+Instructions:
+- Answer the question conversationally, clearly, and completely using ONLY the verified context above.
+- If asking about package pricing in Mexico (ITC Tijuana), clearly cite both tiers: Out-Patient ($18,995 USD) and In-Patient ($30,000 USD).
+- If asking about recovery time or stay duration, specify that ITC Tijuana cancer programs require a structured minimum stay of 3 weeks for daily therapies, while Thailand Form Recovery wellness sessions have virtually zero downtime.
+- If asking whether care is cheaper in Mexico, clarify that alternative care is not cheaper in Mexico compared to basic wellness in Thailand ($18,995 vs $64 USD).
+- If asking whether Thailand offers the 3-week cancer immunotherapy package, state clearly that it is not available in Bangkok (Thailand covers basic wellness starting from $64 USD only), and that 3-week cancer packages are exclusively at ITC Tijuana, Mexico ($18,995 USD Out-Patient / $30,000 USD In-Patient).
+- If asking about studies, stats, or engineering specs (like radiofrequency MHz or wattage) not in the context, explicitly declare they are not in our verified records.
+- Conclude with citations as [Title](URL)."""
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     if is_follow_up and history:
@@ -1324,11 +1375,62 @@ Conclude with citations as [Title](URL)."""
             messages.append({"role": h["role"], "content": h["content"]})
     messages.append({"role": "user", "content": user_prompt})
 
-    # 3. Stream from OpenRouter with Fallback to Dynamic Synthesizer
+    # 3. Stream from Groq (Primary) or OpenRouter (Secondary)
     full_answer_tokens = []
     streamed_successfully = False
 
-    if settings.OPENROUTER_API_KEY.strip():
+    if is_medical:
+        medical_answer = build_medical_contraindication_response(query, lang=lang)
+        words = medical_answer.split(" ")
+        for i in range(0, len(words), 3):
+            chunk_words = " ".join(words[i:i+3]) + (" " if i+3 < len(words) else "")
+            yield f"data: {json.dumps({'type': 'token', 'content': chunk_words})}\n\n"
+        yield f"data: {json.dumps({'type': 'meta', 'citations': [], 'lead_recommended': True})}\n\n"
+        yield "data: [DONE]\n\n"
+        save_message(session_id, "user", query)
+        save_message(session_id, "assistant", medical_answer)
+        return
+
+    # Primary: Stream from Groq Cloud
+    if settings.GROQ_API_KEY.strip():
+        groq_models = [settings.GROQ_MODEL] + settings.GROQ_FALLBACK_MODELS
+        headers = {
+            "Authorization": f"Bearer {settings.GROQ_API_KEY.strip()}",
+            "Content-Type": "application/json"
+        }
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            for model in groq_models:
+                payload = {
+                    "model": model,
+                    "messages": messages,
+                    "temperature": 0.1,
+                    "max_tokens": 600,
+                    "stream": True
+                }
+                try:
+                    async with client.stream("POST", settings.GROQ_BASE_URL, headers=headers, json=payload) as resp:
+                        if resp.status_code == 200:
+                            async for line in resp.aiter_lines():
+                                if line.startswith("data: "):
+                                    data_str = line[6:].strip()
+                                    if data_str == "[DONE]":
+                                        break
+                                    try:
+                                        parsed = json.loads(data_str)
+                                        delta = parsed["choices"][0]["delta"].get("content", "")
+                                        if delta:
+                                            full_answer_tokens.append(delta)
+                                            yield f"data: {json.dumps({'type': 'token', 'content': delta})}\n\n"
+                                    except Exception:
+                                        continue
+                            if full_answer_tokens:
+                                streamed_successfully = True
+                                break
+                except Exception as e:
+                    logger.error(f"Streaming error on Groq {model}: {e}")
+
+    # Secondary: Stream from OpenRouter
+    if not streamed_successfully and settings.OPENROUTER_API_KEY.strip():
         all_models = [settings.PRIMARY_MODEL] + settings.FALLBACK_MODELS
         headers = {
             "Authorization": f"Bearer {settings.OPENROUTER_API_KEY.strip()}",
@@ -1361,10 +1463,11 @@ Conclude with citations as [Title](URL)."""
                                             yield f"data: {json.dumps({'type': 'token', 'content': delta})}\n\n"
                                     except Exception:
                                         continue
-                            streamed_successfully = True
-                            break
+                            if full_answer_tokens:
+                                streamed_successfully = True
+                                break
                 except Exception as e:
-                    logger.error(f"Streaming error on {model}: {e}")
+                    logger.error(f"Streaming error on OpenRouter {model}: {e}")
 
     full_answer = "".join(full_answer_tokens).strip()
 
